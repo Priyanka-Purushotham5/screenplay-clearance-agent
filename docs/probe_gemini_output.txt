@@ -1,0 +1,81 @@
+
+========================================================================
+PROMPT: STANDARD — well-known rights query
+========================================================================
+  text: Identify the current rights holder for the song 'Happy Birthday to You'. Include at least one source URL with a brief excerpt. Before answering, please note any caveats about your knowledge cutoff date.
+
+--- raw response.text ---
+{
+  "title": "Happy Birthday to You",
+  "rights_holder": "Public Domain",
+  "public_domain": true,
+  "confidence": "high",
+  "sources": [
+    {
+      "url": "https://www.nytimes.com/2016/02/10/business/media/happy-birthday-to-you-copyright-settlement.html",
+      "excerpt": "The decades-long fight over the copyright to 'Happy Birthday to You,' perhaps the most famous song in the world, is officially over. A federal judge on Monday approved a settlement that declares the song to be in the public domain."
+    }
+  ],
+  "notes": "My knowledge cutoff is early 2023. As of the 2016 legal settlement, 'Happy Birthday to You' is in the public domain."
+}
+
+--- validated Pydantic model ---
+{
+  "title": "Happy Birthday to You",
+  "rights_holder": "Public Domain",
+  "public_domain": true,
+  "confidence": "high",
+  "sources": [
+    {
+      "url": "https://www.nytimes.com/2016/02/10/business/media/happy-birthday-to-you-copyright-settlement.html",
+      "excerpt": "The decades-long fight over the copyright to 'Happy Birthday to You,' perhaps the most famous song in the world, is officially over. A federal judge on Monday approved a settlement that declares the song to be in the public domain."
+    }
+  ],
+  "notes": "My knowledge cutoff is early 2023. As of the 2016 legal settlement, 'Happy Birthday to You' is in the public domain."
+}
+
+  model used  : gemini-2.5-flash
+  usage       : cache_tokens_details=None cached_content_token_count=None candidates_token_count=194 candidates_tokens_details=None prompt_token_count=39 prompt_tokens_details=[ModalityTokenCount(
+  modality=<MediaModality.TEXT: 'TEXT'>,
+  token_count=39
+)] thoughts_token_count=641 tool_use_prompt_token_count=None tool_use_prompt_tokens_details=None total_token_count=874 traffic_type=None
+
+========================================================================
+PROMPT: STRESS — optional + enum edge case
+========================================================================
+  text: Identify the rights holder for a 1971 experimental short film called 'Wavelength' directed by Michael Snow. If you are uncertain, say so in the confidence field. Do not include a notes field if there is nothing to add.
+
+--- raw response.text ---
+{
+  "title": "Wavelength",
+  "rights_holder": "The Estate of Michael Snow",
+  "public_domain": false,
+  "confidence": "high",
+  "sources": [
+    {
+      "url": "https://www.canyoncinema.com/catalog/film/?i=1588",
+      "excerpt": "WAVELENGTH Michael Snow, 1967... Copyright 1967 Michael Snow."
+    }
+  ]
+}
+
+--- validated Pydantic model ---
+{
+  "title": "Wavelength",
+  "rights_holder": "The Estate of Michael Snow",
+  "public_domain": false,
+  "confidence": "high",
+  "sources": [
+    {
+      "url": "https://www.canyoncinema.com/catalog/film/?i=1588",
+      "excerpt": "WAVELENGTH Michael Snow, 1967... Copyright 1967 Michael Snow."
+    }
+  ],
+  "notes": null
+}
+
+  model used  : gemini-2.5-flash
+  usage       : cache_tokens_details=None cached_content_token_count=None candidates_token_count=113 candidates_tokens_details=None prompt_token_count=50 prompt_tokens_details=[ModalityTokenCount(
+  modality=<MediaModality.TEXT: 'TEXT'>,
+  token_count=50
+)] thoughts_token_count=1076 tool_use_prompt_token_count=None tool_use_prompt_tokens_details=None total_token_count=1239 traffic_type=None

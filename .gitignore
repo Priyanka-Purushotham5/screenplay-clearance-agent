@@ -1,4 +1,4 @@
-﻿# Environment
+# Environment
 .env
 .env.local
 .env.*.local
@@ -69,4 +69,8 @@ secrets/
 
 # Misc
 *.log
-*.sql
+
+# Windows duplicate artefacts (files created by Explorer copy-paste, e.g. "__init__ (2).py")
+* (2).*
+
+# Do NOT ignore *.sql -- db/init.sql and alembic migration files must be committed
