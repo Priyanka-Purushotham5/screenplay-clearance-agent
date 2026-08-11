@@ -1,55 +1,88 @@
-version: '3.8'
+# Script-to-Clearance Agent — local development stack
+#
+# Note: no `version:` key. It has been obsolete since Compose v2 and
+# newer Docker versions emit a warning if you include it.
+
+name: clearance
 
 services:
-  # 1. Algorithmic Fast-Path (Execution Layer)
-  backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
+  # ---------------------------------------------------------------
+  # Postgres — scripts, runs, elements, findings.
+  # Relational because the review UI queries across all four.
+  # ---------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: clearance
+      POSTGRES_PASSWORD: clearance
+      POSTGRES_DB: clearance
+    ports:
+      - "5432:5432"          # exposed so you can inspect with psql/TablePlus
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clearance -d clearance"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ---------------------------------------------------------------
+  # API — FastAPI + the ADK agent running as an async background task.
+  # Handles upload, orchestrates the agent, streams progress over SSE.
+  # ---------------------------------------------------------------
+  api:
+    build:
+      context: ./api
     ports:
       - "8080:8080"
     environment:
-      - REDIS_URL=redis:6379
-      - PROMETHEUS_URL=http://prometheus:9090
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      DATABASE_URL: postgresql+asyncpg://clearance:clearance@db:5432/clearance
+      UPLOAD_DIR: /data/uploads
+      # Credentials come from .env — never commit that file
+      GOOGLE_GENAI_USE_VERTEXAI: "true"
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+      GOOGLE_CLOUD_LOCATION: ${GOOGLE_CLOUD_LOCATION:-us-central1}
+      PARALLEL_API_KEY: ${PARALLEL_API_KEY}
+      EXTRACTION_MODEL: ${EXTRACTION_MODEL:-gemini-2.5-flash}
+      ASSESSMENT_MODEL: ${ASSESSMENT_MODEL:-gemini-2.5-pro}
+      # OTLP export to Grafana Cloud is optional here; left unset by default
+    volumes:
+      # REMOVED: - ./api:/app (was overwriting clean image with corrupted Windows files)
+      - uploads:/data/uploads
+      # For Windows with WSL2, gcloud creds mount correctly via ${HOME}
+      # If this fails, comment it out and authenticate inside container:
+      #   docker exec clearance-api-1 gcloud auth application-default login
+      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
     depends_on:
-      - redis
-      - prometheus
+      db:
+        condition: service_healthy
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0 --port 8080
+    # Single worker on purpose: agent runs live in-process and stream
+    # progress to SSE clients through an in-memory bus. Multiple workers
+    # would split that bus across processes and break the live feed.
 
-  # 2. Control Panel & Human-in-the-loop Dashboard
-  frontend:
+  # ---------------------------------------------------------------
+  # Web — Next.js review interface.
+  # ---------------------------------------------------------------
+  web:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: ./web
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
-    depends_on:
-      - backend
-
-  # 3. Queue State & Metadata Storage
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-
-  # 4. Simulated GPU Telemetry
-  dcgm-exporter:
-    image: ghcr.io/saiakhil2012/dcgm-fake-gpu-exporter:latest
-    ports:
-      - "9400:9400"
-    environment:
-      - NUM_FAKE_GPUS=4
-      - METRIC_PROFILE=spike
-    restart: unless-stopped
-
-  # 5. Local Telemetry Aggregator
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
+      # Browser-side calls, so this is the host-visible URL, not `api:8080`
+      NEXT_PUBLIC_API_URL: http://localhost:8080
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./web:/app
+      - /app/node_modules              # keep container's node_modules
+      - /app/.next
     depends_on:
-      - dcgm-exporter
+      - api
+    command: npm run dev
+
+volumes:
+  db_data:
+  uploads:
