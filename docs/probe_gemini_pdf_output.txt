@@ -1,0 +1,31 @@
+PDF: docs/test_screenplay.pdf  (4.8 KB)
+Sending inline as Part.from_bytes() — limit ~20 MB
+
+Prompt: This is a screenplay PDF. Extract every scene heading (lines starting with INT. or EXT. or I/E.) and return them as a JSON array of strings — nothing else, no commentary. Example format: ["INT. OFFICE - DAY", "EXT. STREET - NIGHT"]
+
+========================================================================
+--- raw response.text ---
+```json
+[
+  "INT. RECORD LABEL OFFICE - DAY",
+  "ANGLE ON -- THE TURNTABLE",
+  "INT. RECORD LABEL OFFICE - CONTINUOUS",
+  "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON",
+  "INT. LAW FIRM - CONFERENCE ROOM - NIGHT",
+  "I/E. PARKING GARAGE - NIGHT"
+]
+```
+
+--- parsed JSON (if valid) ---
+  Response is not valid JSON: Expecting value: line 1 column 1 (char 0)
+  (Model deviated from the instruction — note this in api-notes.md)
+
+  model used : gemini-2.5-flash
+  file size  : 4.8 KB
+  usage      : cache_tokens_details=None cached_content_token_count=None candidates_token_count=92 candidates_tokens_details=None prompt_token_count=832 prompt_tokens_details=[ModalityTokenCount(
+  modality=<MediaModality.TEXT: 'TEXT'>,
+  token_count=58
+), ModalityTokenCount(
+  modality=<MediaModality.DOCUMENT: 'DOCUMENT'>,
+  token_count=774
+)] thoughts_token_count=61 tool_use_prompt_token_count=None tool_use_prompt_tokens_details=None total_token_count=985 traffic_type=None
