@@ -1,1 +1,1 @@
-# Cost-Aware-Render-Farm-Gateway-agentic-cinema-hackathon
+# AI agent for screenplay rights clearance using Google Cloud ADK
