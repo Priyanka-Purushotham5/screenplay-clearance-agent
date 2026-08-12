@@ -1,0 +1,564 @@
+{
+  "scenes": [
+    {
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "script_id": "demo",
+      "number": 1,
+      "int_ext": "EXT",
+      "location": "HIGHWAY 9 - MOJAVE DESERT",
+      "time_of_day": "DAWN",
+      "heading": "EXT. HIGHWAY 9 - MOJAVE DESERT - DAWN",
+      "page_start": 1,
+      "page_end": 2,
+      "elements": [
+        {
+          "id": "a1b2c3d4-e001-4000-8000-000000000101",
+          "scene_id": "a1b2c3d4-0001-4000-8000-000000000001",
+          "seq": 1,
+          "type": "scene_heading",
+          "character": null,
+          "page": 1,
+          "text": "EXT. HIGHWAY 9 - MOJAVE DESERT - DAWN"
+        },
+        {
+          "id": "a1b2c3d4-e002-4000-8000-000000000101",
+          "scene_id": "a1b2c3d4-0001-4000-8000-000000000001",
+          "seq": 2,
+          "type": "action",
+          "character": null,
+          "page": 1,
+          "text": "A two-lane road cuts through cracked earth. Heat shimmer already rising at the horizon. A battered 1974 FORD BRONCO rolls into frame, windows down, trailing a thin plume of dust."
+        },
+        {
+          "id": "a1b2c3d4-e003-4000-8000-000000000101",
+          "scene_id": "a1b2c3d4-0001-4000-8000-000000000001",
+          "seq": 3,
+          "type": "action",
+          "character": null,
+          "page": 1,
+          "text": "The radio crackles. PATSY CLINE bleeds through static. The driver's hand hangs out the window, fingers trailing in the warm air."
+        },
+        {
+          "id": "a1b2c3d4-e004-4000-8000-000000000101",
+          "scene_id": "a1b2c3d4-0001-4000-8000-000000000001",
+          "seq": 4,
+          "type": "transition",
+          "character": null,
+          "page": 2,
+          "text": "CUT TO:"
+        }
+      ]
+    },
+    {
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "script_id": "demo",
+      "number": 2,
+      "int_ext": "INT",
+      "location": "FORD BRONCO",
+      "time_of_day": "CONTINUOUS",
+      "heading": "INT. FORD BRONCO - CONTINUOUS",
+      "page_start": 2,
+      "page_end": 4,
+      "elements": [
+        {
+          "id": "a1b2c3d4-e001-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 1,
+          "type": "scene_heading",
+          "character": null,
+          "page": 2,
+          "text": "INT. FORD BRONCO - CONTINUOUS"
+        },
+        {
+          "id": "a1b2c3d4-e002-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 2,
+          "type": "action",
+          "character": null,
+          "page": 2,
+          "text": "NORA VASQUEZ (38, sunburned, a map unfolded across the steering wheel) squints at a hand-written address on a gas-station receipt. The Patsy Cline cuts out. She reaches forward and thumps the dash."
+        },
+        {
+          "id": "a1b2c3d4-e003-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 3,
+          "type": "character",
+          "character": "NORA",
+          "page": 2,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e004-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 4,
+          "type": "parenthetical",
+          "character": "NORA",
+          "page": 2,
+          "text": "(to herself)"
+        },
+        {
+          "id": "a1b2c3d4-e005-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 5,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 2,
+          "text": "Come on. Not now."
+        },
+        {
+          "id": "a1b2c3d4-e006-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 6,
+          "type": "action",
+          "character": null,
+          "page": 3,
+          "text": "The radio crackles back to life — this time it's WILLIE NELSON, \"ON THE ROAD AGAIN.\" She laughs despite herself."
+        },
+        {
+          "id": "a1b2c3d4-e007-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 7,
+          "type": "character",
+          "character": "NORA",
+          "page": 3,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e008-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 8,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 3,
+          "text": "Alright, Willie. You win. We keep going."
+        },
+        {
+          "id": "a1b2c3d4-e009-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 9,
+          "type": "action",
+          "character": null,
+          "page": 3,
+          "text": "She drops the receipt in the cupholder and fixes both hands on the wheel. The Bronco accelerates."
+        },
+        {
+          "id": "a1b2c3d4-e010-4000-8000-000000000202",
+          "scene_id": "a1b2c3d4-0002-4000-8000-000000000002",
+          "seq": 10,
+          "type": "transition",
+          "character": null,
+          "page": 4,
+          "text": "SMASH CUT TO:"
+        }
+      ]
+    },
+    {
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "script_id": "demo",
+      "number": 3,
+      "int_ext": "INT",
+      "location": "DINER",
+      "time_of_day": "NIGHT",
+      "heading": "INT. DINER - NIGHT",
+      "page_start": 4,
+      "page_end": 7,
+      "elements": [
+        {
+          "id": "a1b2c3d4-e001-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 1,
+          "type": "scene_heading",
+          "character": null,
+          "page": 4,
+          "text": "INT. DINER - NIGHT"
+        },
+        {
+          "id": "a1b2c3d4-e002-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 2,
+          "type": "action",
+          "character": null,
+          "page": 4,
+          "text": "Vinyl booths under fluorescent light. A Wurlitzer jukebox glows in the corner. SARAH drops a coin in the slot. \"TAKE ON ME\" by A-HA fills the room. MARCUS (40s, weathered) watches from the counter, nursing a COCA-COLA."
+        },
+        {
+          "id": "a1b2c3d4-e003-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 3,
+          "type": "character",
+          "character": "SARAH",
+          "page": 4,
+          "text": "SARAH"
+        },
+        {
+          "id": "a1b2c3d4-e004-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 4,
+          "type": "dialogue",
+          "character": "SARAH",
+          "page": 4,
+          "text": "God, I haven't heard this since high school."
+        },
+        {
+          "id": "a1b2c3d4-e005-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 5,
+          "type": "character",
+          "character": "MARCUS",
+          "page": 5,
+          "text": "MARCUS"
+        },
+        {
+          "id": "a1b2c3d4-e006-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 6,
+          "type": "parenthetical",
+          "character": "MARCUS",
+          "page": 5,
+          "text": "(not looking up)"
+        },
+        {
+          "id": "a1b2c3d4-e007-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 7,
+          "type": "dialogue",
+          "character": "MARCUS",
+          "page": 5,
+          "text": "Nineteen eighty-five. That song's older than half the people in this room."
+        },
+        {
+          "id": "a1b2c3d4-e008-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 8,
+          "type": "character",
+          "character": "SARAH",
+          "page": 5,
+          "text": "SARAH"
+        },
+        {
+          "id": "a1b2c3d4-e009-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 9,
+          "type": "dialogue",
+          "character": "SARAH",
+          "page": 5,
+          "text": "Then those people missed out. Sit down, Marcus. That stool's been saving itself for you."
+        },
+        {
+          "id": "a1b2c3d4-e010-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 10,
+          "type": "action",
+          "character": null,
+          "page": 6,
+          "text": "Marcus sets down the Coca-Cola. Something in him relents. He crosses to her booth and slides in across from her. The jukebox cycles to a PATSY CLINE track."
+        },
+        {
+          "id": "a1b2c3d4-e011-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 11,
+          "type": "character",
+          "character": "MARCUS",
+          "page": 6,
+          "text": "MARCUS"
+        },
+        {
+          "id": "a1b2c3d4-e012-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 12,
+          "type": "dialogue",
+          "character": "MARCUS",
+          "page": 6,
+          "text": "You know, there's something I've been meaning to tell you. Something I should have said a long time ago. Back when we were still at the — back before all of this. Before the road and the desert and whatever it is we're doing out here."
+        },
+        {
+          "id": "a1b2c3d4-e013-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 13,
+          "type": "character",
+          "character": "MARCUS",
+          "page": 7,
+          "text": "MARCUS (CONT'D)"
+        },
+        {
+          "id": "a1b2c3d4-e014-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 14,
+          "type": "dialogue",
+          "character": "MARCUS",
+          "page": 7,
+          "text": "I never stopped looking for you."
+        },
+        {
+          "id": "a1b2c3d4-e015-4000-8000-000000000303",
+          "scene_id": "a1b2c3d4-0003-4000-8000-000000000003",
+          "seq": 15,
+          "type": "action",
+          "character": null,
+          "page": 7,
+          "text": "A long silence. The Patsy Cline swells."
+        }
+      ]
+    },
+    {
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "script_id": "demo",
+      "number": 4,
+      "int_ext": "INT/EXT",
+      "location": "NORA'S BRONCO / HIGHWAY 9",
+      "time_of_day": "LATER",
+      "heading": "INT./EXT. NORA'S BRONCO / HIGHWAY 9 - LATER",
+      "page_start": 8,
+      "page_end": 9,
+      "elements": [
+        {
+          "id": "a1b2c3d4-e001-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 1,
+          "type": "scene_heading",
+          "character": null,
+          "page": 8,
+          "text": "INT./EXT. NORA'S BRONCO / HIGHWAY 9 - LATER"
+        },
+        {
+          "id": "a1b2c3d4-e002-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 2,
+          "type": "action",
+          "character": null,
+          "page": 8,
+          "text": "The Bronco is parked on a dirt shoulder. Nora sits half-in, half-out of the open driver's door, feet on the ground, phone pressed to her ear. A TRUCK thunders past, rocking the vehicle."
+        },
+        {
+          "id": "a1b2c3d4-e003-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 3,
+          "type": "character",
+          "character": "NORA",
+          "page": 8,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e004-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 4,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 8,
+          "text": "I'm almost there. Two hours, maybe less if I push it. Just — don't let him leave before I get there."
+        },
+        {
+          "id": "a1b2c3d4-e005-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 5,
+          "type": "action",
+          "character": null,
+          "page": 8,
+          "text": "She listens. Her jaw tightens."
+        },
+        {
+          "id": "a1b2c3d4-e006-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 6,
+          "type": "character",
+          "character": "NORA",
+          "page": 9,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e007-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 7,
+          "type": "parenthetical",
+          "character": "NORA",
+          "page": 9,
+          "text": "(quietly)"
+        },
+        {
+          "id": "a1b2c3d4-e008-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 8,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 9,
+          "text": "I know what I'm walking into. I've known since Flagstaff."
+        },
+        {
+          "id": "a1b2c3d4-e009-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 9,
+          "type": "action",
+          "character": null,
+          "page": 9,
+          "text": "She ends the call. Sits still for a moment. Then gets back in the Bronco and pulls the door shut."
+        },
+        {
+          "id": "a1b2c3d4-e010-4000-8000-000000000404",
+          "scene_id": "a1b2c3d4-0004-4000-8000-000000000004",
+          "seq": 10,
+          "type": "transition",
+          "character": null,
+          "page": 9,
+          "text": "CUT TO:"
+        }
+      ]
+    },
+    {
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "script_id": "demo",
+      "number": 5,
+      "int_ext": "EXT",
+      "location": "ABANDONED MOTEL - PARKING LOT",
+      "time_of_day": "NIGHT",
+      "heading": "EXT. ABANDONED MOTEL - PARKING LOT - NIGHT",
+      "page_start": 10,
+      "page_end": 12,
+      "elements": [
+        {
+          "id": "a1b2c3d4-e001-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 1,
+          "type": "scene_heading",
+          "character": null,
+          "page": 10,
+          "text": "EXT. ABANDONED MOTEL - PARKING LOT - NIGHT"
+        },
+        {
+          "id": "a1b2c3d4-e002-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 2,
+          "type": "action",
+          "character": null,
+          "page": 10,
+          "text": "The neon SUNSET PALMS MOTEL sign buzzes and flickers — the P and the S burnt out, leaving UNSET ALM. The Bronco rolls to a stop. Nora steps out."
+        },
+        {
+          "id": "a1b2c3d4-e003-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 3,
+          "type": "action",
+          "character": null,
+          "page": 10,
+          "text": "Marcus is already there, leaning against a rusted ice machine. Sarah stands a few feet away, arms crossed. Nobody looks happy to be here."
+        },
+        {
+          "id": "a1b2c3d4-e004-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 4,
+          "type": "character",
+          "character": "MARCUS",
+          "page": 11,
+          "text": "MARCUS"
+        },
+        {
+          "id": "a1b2c3d4-e005-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 5,
+          "type": "dialogue",
+          "character": "MARCUS",
+          "page": 11,
+          "text": "You're late."
+        },
+        {
+          "id": "a1b2c3d4-e006-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 6,
+          "type": "character",
+          "character": "NORA",
+          "page": 11,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e007-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 7,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 11,
+          "text": "Traffic."
+        },
+        {
+          "id": "a1b2c3d4-e008-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 8,
+          "type": "character",
+          "character": "SARAH",
+          "page": 11,
+          "text": "SARAH"
+        },
+        {
+          "id": "a1b2c3d4-e009-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 9,
+          "type": "parenthetical",
+          "character": "SARAH",
+          "page": 11,
+          "text": "(gesturing at the empty highway)"
+        },
+        {
+          "id": "a1b2c3d4-e010-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 10,
+          "type": "dialogue",
+          "character": "SARAH",
+          "page": 11,
+          "text": "On what road, exactly?"
+        },
+        {
+          "id": "a1b2c3d4-e011-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 11,
+          "type": "action",
+          "character": null,
+          "page": 12,
+          "text": "Nora looks at the motel. Then at Marcus. Then at the road she came in on. She exhales slowly."
+        },
+        {
+          "id": "a1b2c3d4-e012-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 12,
+          "type": "character",
+          "character": "NORA",
+          "page": 12,
+          "text": "NORA"
+        },
+        {
+          "id": "a1b2c3d4-e013-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 13,
+          "type": "dialogue",
+          "character": "NORA",
+          "page": 12,
+          "text": "Alright. Tell me what you know. All of it — no more half-truths on a gas-station receipt."
+        },
+        {
+          "id": "a1b2c3d4-e014-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 14,
+          "type": "action",
+          "character": null,
+          "page": 12,
+          "text": "Marcus pushes off the ice machine. He reaches into his jacket and produces a MANILA ENVELOPE, its seal already broken. He holds it out."
+        },
+        {
+          "id": "a1b2c3d4-e015-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 15,
+          "type": "action",
+          "character": null,
+          "page": 12,
+          "text": "Nora takes it. Opens it. Reads. Her expression doesn't change, but her hand tightens on the paper."
+        },
+        {
+          "id": "a1b2c3d4-e016-4000-8000-000000000505",
+          "scene_id": "a1b2c3d4-0005-4000-8000-000000000005",
+          "seq": 16,
+          "type": "transition",
+          "character": null,
+          "page": 12,
+          "text": "FADE OUT."
+        }
+      ]
+    }
+  ]
+}
