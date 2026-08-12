@@ -1,0 +1,18 @@
+{
+  "run_id": "demo",
+  "script_id": "demo",
+  "status": "complete",
+  "progress": {
+    "elements_found": 14,
+    "researched": 14,
+    "assessed": 14
+  },
+  "stats": {
+    "cache_hits": 4,
+    "tokens_in": 198400,
+    "tokens_out": 17200
+  },
+  "started_at": "2025-08-14T09:12:00Z",
+  "finished_at": "2025-08-14T09:19:43Z",
+  "error": null
+}
