@@ -1,4 +1,9 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import type { Finding } from "@/lib/api-types";
+import { useSelection } from "@/components/linking/LinkingProvider";
+import { RISK_RING, type Risk } from "@/lib/risk";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,6 +44,7 @@ const CATEGORY_BADGE: Record<string, string> = {
 
 interface Props {
   finding: Finding;
+  /** Optional extra behaviour on click — selection happens regardless. */
   onClick?: () => void;
 }
 
@@ -48,18 +54,43 @@ export default function FindingCard({ finding, onClick }: Props) {
   const isFailed = finding.research_status === "failed";
   const isOverridden = finding.review_status === "overridden";
 
+  const ref = useRef<HTMLDivElement>(null);
+  const { selection, select } = useSelection();
+  const isSelected = selection.findingId === finding.id;
+  const seenToken = useRef(0);
+
+  const handleClick = () => {
+    select(finding.id, "findings");
+    onClick?.();
+  };
+
+  // The card scrolls itself rather than the parent hunting for it: a collapsed
+  // group means this component does not exist yet, so its own mount effect is
+  // the only thing guaranteed to run *after* the group expands.
+  useEffect(() => {
+    if (!isSelected) return;
+    // The user clicked this very card — don't move it under their cursor.
+    if (selection.source === "findings") return;
+    if (selection.token === seenToken.current) return;
+    seenToken.current = selection.token;
+    ref.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [isSelected, selection.token, selection.source]);
+
   return (
     <div
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => e.key === "Enter" && onClick() : undefined}
+      ref={ref}
+      data-finding-id={finding.id}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
+      onKeyDown={(e) => e.key === "Enter" && handleClick()}
       className={[
-        "rounded-lg overflow-hidden cursor-pointer transition-opacity",
+        "rounded-lg overflow-hidden cursor-pointer transition-opacity hover:brightness-110",
         RISK_STRIPE[effectiveRisk],
         RISK_TINT[effectiveRisk],
         isAccepted ? "opacity-50" : "opacity-100",
-        onClick ? "hover:brightness-110" : "",
+        isSelected ? RISK_RING[effectiveRisk as Risk] : "",
       ].join(" ")}
     >
       {/* Failed research banner */}

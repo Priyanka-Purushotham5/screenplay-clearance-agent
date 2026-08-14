@@ -24,3 +24,74 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ------------------------------------------------------------------------ */
+/* D4 · bidirectional linking                                               */
+/* ------------------------------------------------------------------------ */
+
+/* Tailwind's preflight does not reset <mark>, so the UA default (yellow
+   background, black text) has to be overridden explicitly. The ring is a
+   box-shadow rather than padding: it paints outside the box, so it costs no
+   layout and cannot break the monospace column alignment of the script. */
+.clearance-mark {
+  background-color: var(--mark-rest);
+  box-shadow: 0 0 0 2px var(--mark-rest);
+  border-radius: 2px;
+  color: inherit;
+  cursor: pointer;
+}
+
+.clearance-mark-selected {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* The animation starts when the node is inserted into the DOM, so a mark that
+   scrolls into view via the virtualiser flashes exactly when it becomes
+   visible — no timers, no mounted-yet checks. */
+@keyframes clearance-flash {
+  0%,
+  12% {
+    background-color: var(--flash-peak);
+    box-shadow: 0 0 0 2px var(--flash-peak), 0 0 0 6px var(--flash-halo);
+  }
+  100% {
+    background-color: var(--mark-rest);
+    box-shadow: 0 0 0 2px var(--mark-rest), 0 0 0 6px transparent;
+  }
+}
+
+/* Whole-element fallback: background only. A block-level glow reads as noise. */
+@keyframes clearance-flash-block {
+  0%,
+  12% {
+    background-color: var(--flash-peak);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* One pulse, not two — two reads as a validation error. The 12% hold (~110ms)
+   guarantees the peak survives a frame or two of scroll settling. fill-mode is
+   `none` so an override (D7) recolouring the mark isn't beaten by a frozen
+   inline value. */
+.clearance-flash {
+  animation: clearance-flash 900ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+  animation-fill-mode: none;
+}
+
+.clearance-flash-block {
+  animation: clearance-flash-block 1100ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+  animation-fill-mode: none;
+}
+
+/* Reduced motion loses the pulse, not the information: the persistent selected
+   styling is applied by class, not by the animation. */
+@media (prefers-reduced-motion: reduce) {
+  .clearance-flash,
+  .clearance-flash-block {
+    animation: none;
+  }
+}

@@ -1,19 +1,16 @@
-interface Props {
-  text: string;
-  "data-element-id"?: string;
-  highlighted?: boolean;
-}
+import type { BlockProps } from "./block";
 
-export default function SceneHeading({ text, highlighted, ...rest }: Props) {
+export default function SceneHeading({ children, className, ...rest }: BlockProps) {
   return (
     <div
       {...rest}
       className={[
         "font-mono font-bold uppercase w-full mt-8 mb-2 px-2 py-1 rounded",
-        highlighted ? "bg-yellow-200" : "bg-zinc-100",
+        "bg-slate-800 text-slate-100",
+        className ?? "",
       ].join(" ")}
     >
-      {text}
+      {children}
     </div>
   );
 }

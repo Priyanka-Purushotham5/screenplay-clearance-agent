@@ -1,19 +1,12 @@
-interface Props {
-  text: string;
-  "data-element-id"?: string;
-  highlighted?: boolean;
-}
+import type { BlockProps } from "./block";
 
-export default function Transition({ text, highlighted, ...rest }: Props) {
+export default function Transition({ children, className, ...rest }: BlockProps) {
   return (
     <div
       {...rest}
-      className={[
-        "font-mono text-right my-4 px-2",
-        highlighted ? "bg-yellow-200" : "",
-      ].join(" ")}
+      className={["font-mono text-right my-4 px-2", className ?? ""].join(" ")}
     >
-      {text}
+      {children}
     </div>
   );
 }

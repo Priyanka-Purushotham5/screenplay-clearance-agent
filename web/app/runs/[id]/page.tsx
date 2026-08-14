@@ -3,7 +3,15 @@
 import { use, useMemo, useState } from "react";
 import { useRun } from "@/lib/hooks/useRun";
 import { useFindings } from "@/lib/hooks/useFindings";
+import { useScenes } from "@/lib/hooks/useScenes";
 import type { Finding, Run } from "@/lib/api-types";
+import { buildFindingIndex } from "@/lib/finding-index";
+import {
+  DeepLinkSeed,
+  LinkingProvider,
+  useSelection,
+} from "@/components/linking/LinkingProvider";
+import ScriptPane from "@/components/screenplay/ScriptPane";
 import FindingGroup from "@/components/findings/FindingGroup";
 import FindingsFilterBar, {
   type RiskFilter,
@@ -64,6 +72,39 @@ function groupRank(findings: Finding[]): number {
 }
 
 // ---------------------------------------------------------------------------
+// Hidden-by-filter notice
+// ---------------------------------------------------------------------------
+
+/**
+ * A mark in the script can belong to a finding the current filters exclude —
+ * the script pane always highlights everything. Without this the click would
+ * select a card that never mounts, and nothing would appear to happen.
+ */
+function HiddenSelectionBar({
+  visible,
+  onClear,
+}: {
+  visible: Finding[];
+  onClear: () => void;
+}) {
+  const { selection } = useSelection();
+  if (!selection.findingId) return null;
+  if (visible.some((f) => f.id === selection.findingId)) return null;
+
+  return (
+    <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 border-b border-slate-700 text-xs text-slate-300 shrink-0">
+      <span>1 selected finding is hidden by the current filters.</span>
+      <button
+        onClick={onClear}
+        className="font-semibold text-slate-100 underline underline-offset-2 hover:text-white"
+      >
+        Show it
+      </button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
@@ -73,15 +114,23 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
   const runQuery = useRun(id);
   const findingsQuery = useFindings(id);
 
+  const run: Run | undefined = runQuery.data;
+  const scenesQuery = useScenes(run?.script_id ?? "");
+
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [unreviewedOnly, setUnreviewedOnly] = useState(false);
   const [sort, setSort] = useState<SortMode>("risk");
 
-  const run: Run | undefined = runQuery.data;
-  const allFindings: Finding[] = findingsQuery.data?.findings ?? [];
+  const allFindings: Finding[] = useMemo(
+    () => findingsQuery.data?.findings ?? [],
+    [findingsQuery.data]
+  );
   const counts = findingsQuery.data?.counts ?? { red: 0, amber: 0, green: 0 };
   const total = findingsQuery.data?.total ?? 0;
+
+  // Built from the unfiltered list: the script always shows every highlight.
+  const index = useMemo(() => buildFindingIndex(allFindings), [allFindings]);
 
   // Derive unique categories for the dropdown
   const categories = useMemo(
@@ -115,6 +164,12 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
     return entries;
   }, [filtered, sort]);
 
+  const clearFilters = () => {
+    setRiskFilter("all");
+    setCategoryFilter("");
+    setUnreviewedOnly(false);
+  };
+
   // Loading / error
   if (runQuery.isPending || findingsQuery.isPending) {
     return (
@@ -133,34 +188,58 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-950">
-      {run && <RunHeader run={run} />}
+    <LinkingProvider index={index}>
+      <div className="flex flex-col h-full bg-slate-950">
+        {run && <RunHeader run={run} />}
 
-      <FindingsFilterBar
-        counts={counts}
-        riskFilter={riskFilter}
-        onRiskFilter={setRiskFilter}
-        categoryFilter={categoryFilter}
-        categories={categories}
-        onCategoryFilter={setCategoryFilter}
-        unreviewedOnly={unreviewedOnly}
-        onUnreviewedOnly={setUnreviewedOnly}
-        sort={sort}
-        onSort={setSort}
-        total={total}
-      />
+        <div className="flex flex-1 min-h-0">
+          {/* Script — left */}
+          <div className="flex-1 min-w-0 min-h-0 border-r border-slate-800">
+            {scenesQuery.data?.scenes ? (
+              <div className="h-full max-w-3xl mx-auto px-4 py-2">
+                <ScriptPane scenes={scenesQuery.data.scenes} />
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center text-slate-600 text-sm">
+                {scenesQuery.isError ? "Failed to load script." : "Loading script…"}
+              </div>
+            )}
+          </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
-        {sortedGroups.length === 0 ? (
-          <p className="text-slate-500 text-sm text-center mt-12">
-            No findings match the current filters.
-          </p>
-        ) : (
-          sortedGroups.map(([canonicalName, findings]) => (
-            <FindingGroup key={canonicalName} findings={findings} />
-          ))
-        )}
+          {/* Findings — right */}
+          <div className="w-[440px] shrink-0 flex flex-col min-h-0">
+            <FindingsFilterBar
+              counts={counts}
+              riskFilter={riskFilter}
+              onRiskFilter={setRiskFilter}
+              categoryFilter={categoryFilter}
+              categories={categories}
+              onCategoryFilter={setCategoryFilter}
+              unreviewedOnly={unreviewedOnly}
+              onUnreviewedOnly={setUnreviewedOnly}
+              sort={sort}
+              onSort={setSort}
+              total={total}
+            />
+
+            <HiddenSelectionBar visible={filtered} onClear={clearFilters} />
+
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
+              {sortedGroups.length === 0 ? (
+                <p className="text-slate-500 text-sm text-center mt-12">
+                  No findings match the current filters.
+                </p>
+              ) : (
+                sortedGroups.map(([canonicalName, findings]) => (
+                  <FindingGroup key={canonicalName} findings={findings} />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        <DeepLinkSeed ready={!!scenesQuery.data?.scenes && allFindings.length > 0} />
       </div>
-    </div>
+    </LinkingProvider>
   );
 }

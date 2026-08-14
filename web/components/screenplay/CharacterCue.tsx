@@ -1,19 +1,15 @@
-interface Props {
-  text: string;
-  "data-element-id"?: string;
-  highlighted?: boolean;
-}
+import type { BlockProps } from "./block";
 
-export default function CharacterCue({ text, highlighted, ...rest }: Props) {
+export default function CharacterCue({ children, className, ...rest }: BlockProps) {
   return (
     <div
       {...rest}
       className={[
         "font-mono text-center mt-4 mb-0 uppercase",
-        highlighted ? "bg-yellow-200" : "",
+        className ?? "",
       ].join(" ")}
     >
-      {text}
+      {children}
     </div>
   );
 }
