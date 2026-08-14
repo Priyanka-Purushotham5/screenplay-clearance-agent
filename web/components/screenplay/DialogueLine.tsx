@@ -1,19 +1,12 @@
-interface Props {
-  text: string;
-  "data-element-id"?: string;
-  highlighted?: boolean;
-}
+import type { BlockProps } from "./block";
 
-export default function DialogueLine({ text, highlighted, ...rest }: Props) {
+export default function DialogueLine({ children, className, ...rest }: BlockProps) {
   return (
     <div
       {...rest}
-      className={[
-        "font-mono mx-auto w-3/5 my-1",
-        highlighted ? "bg-yellow-200" : "",
-      ].join(" ")}
+      className={["font-mono mx-auto w-3/5 my-1", className ?? ""].join(" ")}
     >
-      {text}
+      {children}
     </div>
   );
 }

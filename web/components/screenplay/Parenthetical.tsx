@@ -1,19 +1,12 @@
-interface Props {
-  text: string;
-  "data-element-id"?: string;
-  highlighted?: boolean;
-}
+import type { BlockProps } from "./block";
 
-export default function Parenthetical({ text, highlighted, ...rest }: Props) {
+export default function Parenthetical({ children, className, ...rest }: BlockProps) {
   return (
     <div
       {...rest}
-      className={[
-        "font-mono italic mx-auto w-2/5 my-0",
-        highlighted ? "bg-yellow-200" : "",
-      ].join(" ")}
+      className={["font-mono italic mx-auto w-2/5 my-0", className ?? ""].join(" ")}
     >
-      {text}
+      {children}
     </div>
   );
 }

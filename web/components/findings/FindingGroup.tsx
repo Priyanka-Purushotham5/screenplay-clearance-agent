@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Finding } from "@/lib/api-types";
+import { useSelection } from "@/components/linking/LinkingProvider";
 import FindingCard from "./FindingCard";
 
 // ---------------------------------------------------------------------------
@@ -50,6 +51,24 @@ export default function FindingGroup({ findings, onFindingClick }: Props) {
   const split = isSplit(findings);
   const topRisk = highestRisk(findings);
   const [expanded, setExpanded] = useState(split); // split groups start open
+
+  // Open when a selection lands inside this group — otherwise clicking a
+  // highlighted span in the script would select a card nobody can see.
+  //
+  // Adjusted during render (React's "changing state in response to props"
+  // pattern) rather than in an effect: no cascading render, and keying off the
+  // token means it opens once per selection, so the user can still collapse a
+  // group that holds the current selection.
+  const { selection } = useSelection();
+  const containsSelected =
+    selection.findingId != null &&
+    findings.some((f) => f.id === selection.findingId);
+
+  const [openedForToken, setOpenedForToken] = useState(0);
+  if (containsSelected && selection.token !== openedForToken) {
+    setOpenedForToken(selection.token);
+    setExpanded(true);
+  }
 
   const canonicalName = findings[0].canonical_name;
   const displayName = findings[0].surface_form;

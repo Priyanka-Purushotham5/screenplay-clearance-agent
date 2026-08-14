@@ -4,303 +4,435 @@
       "id": "f0000001-0000-4000-8000-000000000001",
       "element_id": "e0000001-0000-4000-8000-000000000001",
       "risk": "red",
-      "canonical_name": "music:take_on_me:a-ha",
-      "surface_form": "TAKE ON ME",
-      "category": "music",
-      "scene_number": 14,
-      "research_status": "complete",
       "rights_required": ["synchronization", "master_use"],
       "rights_holders": [
         { "role": "publisher", "name": "Warner Chappell Music", "confidence": "high" },
-        { "role": "master owner", "name": "Warner Music Group", "confidence": "high" }
+        { "role": "master", "name": "Warner Records", "confidence": "medium" }
       ],
-      "rationale": "Specified to play on screen in an action line. Both the composition (sync licence) and the specific master recording (master use licence) are implicated — two licences from two rights holders.",
+      "rationale": "The song plays diegetically in an action line — it is heard on screen, which requires both a synchronization licence from the publisher and a master use licence from the label. Written in 1984 and far from public domain.",
       "sources": [
-        { "id": "ev1", "claim": "Warner Chappell administers the publishing for Take On Me", "url": "https://www.warnerchappell.com", "title": "Warner Chappell Music", "excerpt": "Take On Me is administered by Warner Chappell Music Scandinavia AB." },
-        { "id": "ev2", "claim": "Warner Music Group owns the master recording", "url": "https://www.wmg.com", "title": "Warner Music Group", "excerpt": "a-ha recordings are part of the WMG catalogue." }
+        {
+          "id": "ev1",
+          "claim": "\"Take On Me\" was written by Pål Waaktaar, Magne Furuholmen and Morten Harket and is published by Warner Chappell Music.",
+          "url": "https://example.org/take-on-me-credits",
+          "title": "Take On Me — song credits",
+          "excerpt": "Published by Warner Chappell Music. Original master owned by Warner Records."
+        }
       ],
       "alternatives": [
-        "Re-record as a cover — clears the master, publishing still required",
-        "Substitute a production-library track in a similar 80s synth-pop style"
+        "Replace with a production-library track of the same era",
+        "Have the jukebox cut out before the vocal enters"
       ],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:01Z"
+      "created_at": "2025-08-14T09:18:01Z",
+      "canonical_name": "music:take_on_me:a-ha",
+      "surface_form": "\"TAKE ON ME\"",
+      "category": "music",
+      "scene_number": 3,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000303",
+      "char_start": 111,
+      "char_end": 123,
+      "page": 4
     },
     {
       "id": "f0000002-0000-4000-8000-000000000002",
       "element_id": "e0000002-0000-4000-8000-000000000002",
       "risk": "green",
-      "canonical_name": "music:take_on_me:a-ha",
-      "surface_form": "this",
-      "category": "music",
-      "scene_number": 14,
-      "research_status": "complete",
       "rights_required": [],
       "rights_holders": [],
-      "rationale": "Referenced in dialogue only ('God, I haven't heard this since high school'). Song titles are not copyrightable and no recording is used or performed.",
+      "rationale": "The same song, but referred to obliquely in dialogue rather than heard. A spoken reference to a work is not a use of the work and needs no licence.",
       "sources": [
-        { "id": "ev1", "claim": "Warner Chappell administers the publishing for Take On Me", "url": "https://www.warnerchappell.com", "title": "Warner Chappell Music", "excerpt": "Take On Me is administered by Warner Chappell Music Scandinavia AB." }
+        {
+          "id": "ev1",
+          "claim": "Titles and passing references in dialogue are not themselves protected uses of a musical work.",
+          "url": "https://example.org/music-clearance-basics",
+          "title": "When music clearance is required",
+          "excerpt": "Clearance attaches to the recording or composition being used, not to a character mentioning it."
+        }
       ],
       "alternatives": [],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:02Z"
+      "created_at": "2025-08-14T09:18:04Z",
+      "canonical_name": "music:take_on_me:a-ha",
+      "surface_form": "this",
+      "category": "music",
+      "scene_number": 3,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e004-4000-8000-000000000303",
+      "char_start": 21,
+      "char_end": 25,
+      "page": 4
     },
     {
       "id": "f0000003-0000-4000-8000-000000000003",
       "element_id": "e0000003-0000-4000-8000-000000000003",
       "risk": "amber",
+      "rights_required": ["product_placement_or_clearance"],
+      "rights_holders": [
+        { "role": "trademark_owner", "name": "The Coca-Cola Company", "confidence": "high" }
+      ],
+      "rationale": "A named branded product held by a character on screen. Neutral depiction is generally defensible, but production will normally seek written permission or swap to a cleared prop.",
+      "sources": [
+        {
+          "id": "ev1",
+          "claim": "Coca-Cola is a registered trademark of The Coca-Cola Company.",
+          "url": "https://example.org/coca-cola-trademark",
+          "title": "Coca-Cola trademark registration",
+          "excerpt": "Registered word mark, in continuous use since 1886."
+        }
+      ],
+      "alternatives": ["Use a fictional cola brand", "Shoot the label out of frame"],
+      "review_status": "unreviewed",
+      "override_risk": null,
+      "review_note": null,
+      "reviewed_at": null,
+      "created_at": "2025-08-14T09:18:07Z",
       "canonical_name": "trademark:coca_cola",
       "surface_form": "COCA-COLA",
       "category": "trademark",
-      "scene_number": 14,
+      "scene_number": 3,
       "research_status": "complete",
-      "rights_required": ["product_placement_clearance"],
-      "rights_holders": [
-        { "role": "trademark owner", "name": "The Coca-Cola Company", "confidence": "high" }
-      ],
-      "rationale": "Visible on camera in a neutral context (character nursing a drink). Standard product clearance required. No disparagement detected.",
-      "sources": [
-        { "id": "ev3", "claim": "Coca-Cola is a registered trademark of The Coca-Cola Company", "url": "https://www.coca-colacompany.com", "title": "The Coca-Cola Company", "excerpt": "COCA-COLA is a registered trademark of The Coca-Cola Company." }
-      ],
-      "alternatives": [
-        "Replace with a fictional brand (e.g. 'COLA-NOVA') — no clearance needed",
-        "Label prop out of frame"
-      ],
-      "review_status": "accepted",
-      "override_risk": null,
-      "review_note": "Existing product placement agreement in place with Coca-Cola North America.",
-      "reviewed_at": "2025-08-14T10:05:00Z",
-      "created_at": "2025-08-14T09:18:03Z"
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000303",
+      "char_start": 208,
+      "char_end": 217,
+      "page": 4
     },
     {
       "id": "f0000004-0000-4000-8000-000000000004",
       "element_id": "e0000004-0000-4000-8000-000000000004",
       "risk": "amber",
-      "canonical_name": "trademark:coca_cola",
-      "surface_form": "Coke",
-      "category": "trademark",
-      "scene_number": 22,
-      "research_status": "complete",
-      "rights_required": ["product_placement_clearance"],
+      "rights_required": ["product_placement_or_clearance"],
       "rights_holders": [
-        { "role": "trademark owner", "name": "The Coca-Cola Company", "confidence": "high" }
+        { "role": "trademark_owner", "name": "The Coca-Cola Company", "confidence": "high" }
       ],
-      "rationale": "Secondary trademark reference visible in dialogue ('Get me a Coke'). Covered under same clearance as scene 14 mention.",
+      "rationale": "Second on-screen appearance of the same product, set down on the counter. Covered by whatever permission is obtained for the first.",
       "sources": [
-        { "id": "ev3", "claim": "Coca-Cola is a registered trademark of The Coca-Cola Company", "url": "https://www.coca-colacompany.com", "title": "The Coca-Cola Company", "excerpt": "COCA-COLA is a registered trademark of The Coca-Cola Company." }
+        {
+          "id": "ev1",
+          "claim": "Coca-Cola is a registered trademark of The Coca-Cola Company.",
+          "url": "https://example.org/coca-cola-trademark",
+          "title": "Coca-Cola trademark registration",
+          "excerpt": "Registered word mark, in continuous use since 1886."
+        }
       ],
-      "alternatives": [],
-      "review_status": "accepted",
-      "override_risk": null,
-      "review_note": "Covered by sc14 clearance.",
-      "reviewed_at": "2025-08-14T10:06:00Z",
-      "created_at": "2025-08-14T09:18:04Z"
+      "alternatives": ["Covered by the clearance obtained for the first appearance"],
+      "review_status": "overridden",
+      "override_risk": "green",
+      "review_note": "Same prop, same scene — rolling into the single clearance for the first appearance.",
+      "reviewed_at": "2025-08-14T11:02:19Z",
+      "created_at": "2025-08-14T09:18:09Z",
+      "canonical_name": "trademark:coca_cola",
+      "surface_form": "Coca-Cola",
+      "category": "trademark",
+      "scene_number": 3,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e010-4000-8000-000000000303",
+      "char_start": 21,
+      "char_end": 30,
+      "page": 6
     },
     {
       "id": "f0000005-0000-4000-8000-000000000005",
       "element_id": "e0000005-0000-4000-8000-000000000005",
-      "risk": "red",
-      "canonical_name": "artwork:rothko_orange_red_yellow_1961",
-      "surface_form": "a Rothko",
-      "category": "artwork",
-      "scene_number": 31,
-      "research_status": "complete",
-      "rights_required": ["copyright_clearance", "reproduction_licence"],
+      "risk": "amber",
+      "rights_required": ["trade_dress_clearance"],
       "rights_holders": [
-        { "role": "estate", "name": "Kate Rothko Prizel & Christopher Rothko / ARS", "confidence": "high" }
+        { "role": "trademark_owner", "name": "Wurlitzer (Gibson Brands)", "confidence": "medium" }
       ],
-      "rationale": "Mark Rothko died in 1970. His works remain under copyright until 2040 (death + 70 in US). On-screen depiction of a specific identifiable work requires licence from the Rothko estate via ARS.",
+      "rationale": "A named jukebox brand described as visible in the location. The distinctive cabinet is protectable trade dress; research on the current mark holder was incomplete.",
       "sources": [
-        { "id": "ev4", "claim": "Rothko works administered by ARS New York", "url": "https://www.artstor.org", "title": "Artists Rights Society", "excerpt": "The estate of Mark Rothko is represented by ARS." }
+        {
+          "id": "ev1",
+          "claim": "The Wurlitzer name has changed hands several times since 1988.",
+          "url": "https://example.org/wurlitzer-history",
+          "title": "Wurlitzer — corporate history",
+          "excerpt": "Brand assets were sold in stages; jukebox rights and piano rights diverged."
+        }
       ],
-      "alternatives": [
-        "Commission an original abstract work in a similar style",
-        "Use a work by a pre-1928 abstract painter (public domain)"
-      ],
+      "alternatives": ["Describe the jukebox generically", "Dress a period-correct unbranded cabinet"],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:05Z"
+      "created_at": "2025-08-14T09:18:12Z",
+      "canonical_name": "trademark:wurlitzer",
+      "surface_form": "Wurlitzer",
+      "category": "trademark",
+      "scene_number": 3,
+      "research_status": "partial",
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000303",
+      "char_start": 40,
+      "char_end": 49,
+      "page": 4
     },
     {
       "id": "f0000006-0000-4000-8000-000000000006",
       "element_id": "e0000006-0000-4000-8000-000000000006",
-      "risk": "amber",
-      "canonical_name": "person:elena_vasquez",
-      "surface_form": "Elena Vasquez",
-      "category": "person",
-      "scene_number": 8,
-      "research_status": "complete",
-      "rights_required": ["right_of_publicity"],
+      "risk": "red",
+      "rights_required": ["synchronization", "master_use"],
       "rights_holders": [
-        { "role": "subject", "name": "Elena Vasquez", "confidence": "medium" }
+        { "role": "publisher", "name": "Sony Music Publishing", "confidence": "medium" }
       ],
-      "rationale": "Living public figure named in dialogue in a neutral context. No defamatory or fictionalised portrayal detected, but name-check clearance is advisable.",
+      "rationale": "Named song heard on the car radio in an action line. On-screen use of both composition and recording; written 1980 and in copyright.",
       "sources": [
-        { "id": "ev5", "claim": "Elena Vasquez is a living public figure (journalist)", "url": "https://example.com/vasquez", "title": "Public record", "excerpt": "Elena Vasquez, investigative journalist, currently active." }
+        {
+          "id": "ev1",
+          "claim": "\"On the Road Again\" was written by Willie Nelson and released in 1980.",
+          "url": "https://example.org/on-the-road-again",
+          "title": "On the Road Again — release history",
+          "excerpt": "Written by Willie Nelson for the film Honeysuckle Rose, released 1980."
+        }
       ],
-      "alternatives": [
-        "Change to a clearly fictional name",
-        "Obtain written consent from subject"
-      ],
+      "alternatives": ["Use a cleared period country track", "Keep the radio as static only"],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:06Z"
+      "created_at": "2025-08-14T09:18:15Z",
+      "canonical_name": "music:on_the_road_again:willie_nelson",
+      "surface_form": "\"ON THE ROAD AGAIN.\"",
+      "category": "music",
+      "scene_number": 2,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e006-4000-8000-000000000202",
+      "char_start": 64,
+      "char_end": 84,
+      "page": 3
     },
     {
       "id": "f0000007-0000-4000-8000-000000000007",
       "element_id": "e0000007-0000-4000-8000-000000000007",
-      "risk": "green",
-      "canonical_name": "literary:hamlet_to_be_or_not_to_be",
-      "surface_form": "To be, or not to be",
-      "category": "literary",
-      "scene_number": 19,
-      "research_status": "complete",
-      "rights_required": [],
-      "rights_holders": [],
-      "rationale": "Excerpt from Hamlet by William Shakespeare (died 1616). The work is firmly in the public domain in all jurisdictions. No clearance required.",
+      "risk": "amber",
+      "rights_required": ["personality_rights_review"],
+      "rights_holders": [
+        { "role": "individual", "name": "Willie Nelson", "confidence": "high" }
+      ],
+      "rationale": "A living public figure addressed by first name in dialogue. A passing, non-defamatory reference is low exposure, but production legal will want to see it.",
       "sources": [
-        { "id": "ev6", "claim": "Hamlet is public domain", "url": "https://www.gutenberg.org/ebooks/1524", "title": "Project Gutenberg — Hamlet", "excerpt": "This eBook is for the use of anyone anywhere in the United States and most other parts of the world at no cost." }
+        {
+          "id": "ev1",
+          "claim": "Willie Nelson is a living recording artist.",
+          "url": "https://example.org/willie-nelson",
+          "title": "Willie Nelson — biography",
+          "excerpt": "American singer-songwriter, born 1933."
+        }
+      ],
+      "alternatives": ["Cut the name and keep the line generic"],
+      "review_status": "unreviewed",
+      "override_risk": null,
+      "review_note": null,
+      "reviewed_at": null,
+      "created_at": "2025-08-14T09:18:18Z",
+      "canonical_name": "person:willie_nelson",
+      "surface_form": "Willie",
+      "category": "person",
+      "scene_number": 2,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e008-4000-8000-000000000202",
+      "char_start": 9,
+      "char_end": 15,
+      "page": 3
+    },
+    {
+      "id": "f0000008-0000-4000-8000-000000000008",
+      "element_id": "e0000008-0000-4000-8000-000000000008",
+      "risk": "amber",
+      "rights_required": ["personality_rights_review"],
+      "rights_holders": [
+        { "role": "individual", "name": "Willie Nelson", "confidence": "high" }
+      ],
+      "rationale": "The artist named in an action line as the performer heard on the radio. Identifying a real performer alongside their recording is normally covered by the music licence, but the name is flagged for review.",
+      "sources": [
+        {
+          "id": "ev1",
+          "claim": "Willie Nelson is a living recording artist.",
+          "url": "https://example.org/willie-nelson",
+          "title": "Willie Nelson — biography",
+          "excerpt": "American singer-songwriter, born 1933."
+        }
       ],
       "alternatives": [],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:07Z"
-    },
-    {
-      "id": "f0000008-0000-4000-8000-000000000008",
-      "element_id": "e0000008-0000-4000-8000-000000000008",
-      "risk": "red",
-      "canonical_name": "location:nobu_malibu",
-      "surface_form": "Nobu Malibu",
-      "category": "location",
-      "scene_number": 27,
+      "created_at": "2025-08-14T09:18:20Z",
+      "canonical_name": "person:willie_nelson",
+      "surface_form": "WILLIE NELSON",
+      "category": "person",
+      "scene_number": 2,
       "research_status": "complete",
-      "rights_required": ["location_release", "trade_dress_clearance"],
-      "rights_holders": [
-        { "role": "trademark owner", "name": "Nobu Hospitality LLC", "confidence": "high" }
-      ],
-      "rationale": "Named real restaurant shown on camera with signage and identifiable trade dress. Scene depicts unflattering portrayal (health code violation subplot). Disparagement risk elevates to RED.",
-      "sources": [
-        { "id": "ev7", "claim": "Nobu is a registered trademark of Nobu Hospitality", "url": "https://www.noburestaurants.com", "title": "Nobu Restaurants", "excerpt": "Nobu is a registered service mark." }
-      ],
-      "alternatives": [
-        "Rename to fictional restaurant and redress signage",
-        "Obtain location release and written approval from Nobu legal"
-      ],
-      "review_status": "unreviewed",
-      "override_risk": null,
-      "review_note": null,
-      "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:08Z"
+      "script_element_id": "a1b2c3d4-e006-4000-8000-000000000202",
+      "char_start": 40,
+      "char_end": 53,
+      "page": 3
     },
     {
       "id": "f0000009-0000-4000-8000-000000000009",
       "element_id": "e0000009-0000-4000-8000-000000000009",
       "risk": "red",
-      "canonical_name": "trademark:apple_iphone",
-      "surface_form": "iPhone",
-      "category": "trademark",
-      "scene_number": 5,
-      "research_status": "failed",
+      "rights_required": ["synchronization", "master_use"],
+      "rights_holders": [
+        { "role": "master", "name": "Universal Music Group", "confidence": "low" }
+      ],
+      "rationale": "A named recording artist heard through the radio in an action line. Whichever recording is used will need sync and master clearance; the specific track is unnamed, so the holder could not be pinned down.",
+      "sources": [
+        {
+          "id": "ev1",
+          "claim": "Patsy Cline's catalogue recordings are controlled by Universal Music Group via the Decca masters.",
+          "url": "https://example.org/patsy-cline-masters",
+          "title": "Patsy Cline — master ownership",
+          "excerpt": "Decca-era masters passed to MCA and subsequently to Universal."
+        }
+      ],
+      "alternatives": ["Name a public-domain recording", "Leave the radio unidentified"],
+      "review_status": "unreviewed",
+      "override_risk": null,
+      "review_note": null,
+      "reviewed_at": null,
+      "created_at": "2025-08-14T09:18:23Z",
+      "canonical_name": "music:patsy_cline_recording",
+      "surface_form": "PATSY CLINE",
+      "category": "music",
+      "scene_number": 1,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e003-4000-8000-000000000101",
+      "char_start": 20,
+      "char_end": 31,
+      "page": 1
+    },
+    {
+      "id": "f0000010-0000-4000-8000-000000000010",
+      "element_id": "e0000010-0000-4000-8000-000000000010",
+      "risk": "red",
+      "rights_required": ["synchronization", "master_use"],
+      "rights_holders": [
+        { "role": "master", "name": "Universal Music Group", "confidence": "low" }
+      ],
+      "rationale": "The same artist again, this time on the diner jukebox. Same clearance path as the first appearance.",
+      "sources": [
+        {
+          "id": "ev1",
+          "claim": "Patsy Cline's catalogue recordings are controlled by Universal Music Group via the Decca masters.",
+          "url": "https://example.org/patsy-cline-masters",
+          "title": "Patsy Cline — master ownership",
+          "excerpt": "Decca-era masters passed to MCA and subsequently to Universal."
+        }
+      ],
+      "alternatives": ["Name a public-domain recording"],
+      "review_status": "unreviewed",
+      "override_risk": null,
+      "review_note": null,
+      "reviewed_at": null,
+      "created_at": "2025-08-14T09:18:25Z",
+      "canonical_name": "music:patsy_cline_recording",
+      "surface_form": "PATSY CLINE",
+      "category": "music",
+      "scene_number": 3,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e010-4000-8000-000000000303",
+      "char_start": 137,
+      "char_end": 148,
+      "page": 6
+    },
+    {
+      "id": "f0000011-0000-4000-8000-000000000011",
+      "element_id": "e0000011-0000-4000-8000-000000000011",
+      "risk": "red",
+      "rights_required": ["synchronization", "master_use"],
+      "rights_holders": [
+        { "role": "master", "name": "Universal Music Group", "confidence": "low" }
+      ],
+      "rationale": "Third appearance — the radio track cutting out inside the Bronco. Same recording, same clearance.",
+      "sources": [
+        {
+          "id": "ev1",
+          "claim": "Patsy Cline's catalogue recordings are controlled by Universal Music Group via the Decca masters.",
+          "url": "https://example.org/patsy-cline-masters",
+          "title": "Patsy Cline — master ownership",
+          "excerpt": "Decca-era masters passed to MCA and subsequently to Universal."
+        }
+      ],
+      "alternatives": [],
+      "review_status": "unreviewed",
+      "override_risk": null,
+      "review_note": null,
+      "reviewed_at": null,
+      "created_at": "2025-08-14T09:18:27Z",
+      "canonical_name": "music:patsy_cline_recording",
+      "surface_form": "Patsy Cline",
+      "category": "music",
+      "scene_number": 2,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000202",
+      "char_start": null,
+      "char_end": null,
+      "page": 2
+    },
+    {
+      "id": "f0000012-0000-4000-8000-000000000012",
+      "element_id": "e0000012-0000-4000-8000-000000000012",
+      "risk": "amber",
       "rights_required": [],
       "rights_holders": [],
-      "rationale": "Research incomplete — could not determine depiction context from available sources. Manual review required before assessment.",
+      "rationale": "Research did not complete for this element — the vehicle mark could not be confirmed against a current registration. Needs manual review before the report is issued.",
       "sources": [],
       "alternatives": [],
       "review_status": "unreviewed",
       "override_risk": null,
       "review_note": null,
       "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:09Z"
-    },
-    {
-      "id": "f0000010-0000-4000-8000-000000000010",
-      "element_id": "e0000010-0000-4000-8000-000000000010",
-      "risk": "amber",
-      "canonical_name": "trademark:ray_ban",
-      "surface_form": "Ray-Bans",
-      "category": "trademark",
-      "scene_number": 3,
-      "research_status": "complete",
-      "rights_required": ["product_placement_clearance"],
-      "rights_holders": [
-        { "role": "trademark owner", "name": "Luxottica Group S.p.A.", "confidence": "high" }
-      ],
-      "rationale": "Sunglasses visible on character, worn positively. Standard product placement clearance required.",
-      "sources": [
-        { "id": "ev8", "claim": "Ray-Ban is owned by Luxottica", "url": "https://www.ray-ban.com", "title": "Ray-Ban", "excerpt": "Ray-Ban is a brand of Luxottica." }
-      ],
-      "alternatives": ["Use unbranded or fictional eyewear brand"],
-      "review_status": "unreviewed",
-      "override_risk": null,
-      "review_note": null,
-      "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:10Z"
-    },
-    {
-      "id": "f0000011-0000-4000-8000-000000000011",
-      "element_id": "e0000011-0000-4000-8000-000000000011",
-      "risk": "amber",
-      "canonical_name": "person:dr_james_cole",
-      "surface_form": "Dr. James Cole",
-      "category": "person",
-      "scene_number": 35,
-      "research_status": "partial",
-      "rights_required": ["right_of_publicity"],
-      "rights_holders": [],
-      "rationale": "Plausible real name for a medical professional. Partial research found multiple real individuals with this name. Cannot confirm fictional intent. Manual verification of script context required.",
-      "sources": [
-        { "id": "ev9", "claim": "Multiple real individuals named James Cole hold medical licences", "url": "https://nppes.cms.hhs.gov", "title": "NPI Registry", "excerpt": "14 results for 'James Cole MD'." }
-      ],
-      "alternatives": [
-        "Rename to unambiguously fictional name",
-        "Add fictional credential suffix to differentiate"
-      ],
-      "review_status": "unreviewed",
-      "override_risk": null,
-      "review_note": null,
-      "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:11Z"
-    },
-    {
-      "id": "f0000012-0000-4000-8000-000000000012",
-      "element_id": "e0000012-0000-4000-8000-000000000012",
-      "risk": "green",
-      "canonical_name": "trademark:ford_mustang",
-      "surface_form": "Mustang",
+      "created_at": "2025-08-14T09:18:30Z",
+      "canonical_name": "trademark:ford_bronco",
+      "surface_form": "FORD BRONCO",
       "category": "trademark",
       "scene_number": 1,
-      "research_status": "complete",
+      "research_status": "failed",
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000101",
+      "char_start": 104,
+      "char_end": 115,
+      "page": 1
+    },
+    {
+      "id": "f0000013-0000-4000-8000-000000000013",
+      "element_id": "e0000013-0000-4000-8000-000000000013",
+      "risk": "green",
       "rights_required": [],
       "rights_holders": [],
-      "rationale": "Vehicle mentioned by type name in an action line ('a battered Mustang'). Incidental mention of a vehicle brand in passing description does not require clearance under standard industry practice.",
+      "rationale": "No motel of this name was found in operation. The location reads as invented, and an invented business name carries no clearance obligation.",
       "sources": [
-        { "id": "ev10", "claim": "Ford Mustang is a well-known vehicle brand", "url": "https://www.ford.com/mustang", "title": "Ford Mustang", "excerpt": "The Ford Mustang has been in continuous production since 1964." }
+        {
+          "id": "ev1",
+          "claim": "No active US business registration matches \"Sunset Palms Motel\".",
+          "url": "https://example.org/business-search",
+          "title": "Business name search",
+          "excerpt": "No matching active registrations returned."
+        }
       ],
       "alternatives": [],
-      "review_status": "unreviewed",
+      "review_status": "accepted",
       "override_risk": null,
       "review_note": null,
-      "reviewed_at": null,
-      "created_at": "2025-08-14T09:18:12Z"
+      "reviewed_at": "2025-08-14T10:41:03Z",
+      "created_at": "2025-08-14T09:18:33Z",
+      "canonical_name": "location:sunset_palms_motel",
+      "surface_form": "SUNSET PALMS MOTEL",
+      "category": "location",
+      "scene_number": 5,
+      "research_status": "complete",
+      "script_element_id": "a1b2c3d4-e002-4000-8000-000000000505",
+      "char_start": 9,
+      "char_end": 27,
+      "page": 10
     }
   ],
-  "total": 12,
-  "counts": {
-    "red": 4,
-    "amber": 5,
-    "green": 3
-  }
+  "total": 13,
+  "counts": { "red": 5, "amber": 6, "green": 2 }
 }

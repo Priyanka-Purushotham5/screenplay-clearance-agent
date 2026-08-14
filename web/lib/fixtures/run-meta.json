@@ -3,9 +3,9 @@
   "script_id": "demo",
   "status": "complete",
   "progress": {
-    "elements_found": 14,
-    "researched": 14,
-    "assessed": 14
+    "elements_found": 13,
+    "researched": 13,
+    "assessed": 13
   },
   "stats": {
     "cache_hits": 4,

@@ -90,6 +90,16 @@ export interface Finding {
   category: "music" | "trademark" | "artwork" | "person" | "location" | "clip" | "literary" | "other";
   scene_number: number;
   research_status: "complete" | "partial" | "failed";
+  // D4 — the join into the script pane.
+  //   findings.element_id → elements.id → elements.script_element_id
+  // NOTE: element_id above is the MENTION id; it never matches ScriptElement.id.
+  script_element_id: string;
+  // Offsets into that one element's `text` — not into the whole script.
+  // Zero-based, half-open. Nullable: the extractor does not always supply them,
+  // and when it does they are LLM output and can be wrong. See lib/highlight.ts.
+  char_start: number | null;
+  char_end: number | null;
+  page: number;
 }
 
 export interface RightsHolder {
