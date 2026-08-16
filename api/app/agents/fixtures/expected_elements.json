@@ -1,0 +1,143 @@
+{
+  "_comment": [
+    "Answer key for C1 extraction against scene_fixture.json.",
+    "Derived from the planted elements annotated in api/scripts/make_test_pdf.py.",
+    "This scores EXTRACTION only — did we find the right things, in the right",
+    "element, in the right category. Risk ratings are B7's ground-truth.md and",
+    "are graded in C6.",
+    "",
+    "`canonical_match` is a lowercase substring that must appear in the produced",
+    "canonical_name. Exact canonical strings are C3's business (normalisation);",
+    "C1 only has to identify the same real-world thing."
+  ],
+
+  "expected_present": [
+    {
+      "script_element_id": "el_2",
+      "element_type": "action",
+      "category": "music",
+      "canonical_match": "take_on_me",
+      "note": "Song specified to play on screen. The RED case in C6 — sync + master."
+    },
+    {
+      "script_element_id": "el_10",
+      "element_type": "action",
+      "category": "trademark",
+      "canonical_match": "coca_cola",
+      "note": "Can with logo facing the lens. Depiction, not mention."
+    },
+    {
+      "script_element_id": "el_10",
+      "element_type": "action",
+      "category": "trademark",
+      "canonical_match": "wea",
+      "note": "Record label mark legible on the vinyl label."
+    },
+    {
+      "script_element_id": "el_12",
+      "element_type": "action",
+      "category": "artwork",
+      "canonical_match": "nighthawks",
+      "note": "Hopper died 1967 — inside the life+70 term. Shown on screen."
+    },
+    {
+      "script_element_id": "el_14",
+      "element_type": "dialogue",
+      "category": "music",
+      "canonical_match": "take_on_me",
+      "note": "THE SPLIT. Same song as el_2, dialogue reference only. Must be a separate record with element_type=dialogue, or the product's core distinction is lost."
+    },
+    {
+      "script_element_id": "el_21",
+      "element_type": "action",
+      "category": "location",
+      "canonical_match": "nobu",
+      "note": "Real restaurant, identifiable on screen — trade dress."
+    },
+    {
+      "script_element_id": "el_23",
+      "element_type": "dialogue",
+      "category": "trademark",
+      "canonical_match": "coca_cola",
+      "note": "Same mark as el_10, dialogue, and in a disparaging context."
+    },
+    {
+      "script_element_id": "el_23",
+      "element_type": "dialogue",
+      "category": "trademark",
+      "canonical_match": "pepsi",
+      "note": "Second mark in the same line."
+    },
+    {
+      "script_element_id": "el_25",
+      "element_type": "dialogue",
+      "category": "literary",
+      "canonical_match": "hamlet",
+      "note": "Quoted Shakespeare — public domain, but must still be found. Accepts a shakespeare canonical too; see canonical_alt."
+    },
+    {
+      "script_element_id": "el_27",
+      "element_type": "action",
+      "category": "person",
+      "canonical_match": "harman",
+      "note": "Described in an action line as the actual music industry executive."
+    },
+    {
+      "script_element_id": "el_28",
+      "element_type": "action",
+      "category": "artwork",
+      "canonical_match": "guernica",
+      "note": "Picasso died 1973 — estate holds until 2044. Shown on screen."
+    }
+  ],
+
+  "canonical_alt": {
+    "el_25": ["shakespeare", "to_be_or_not_to_be"]
+  },
+
+  "expected_absent": [
+    {
+      "surface_forms": ["James Holloway", "Dr. Holloway", "Holloway"],
+      "why": "The precision trap. A fictional character in this script who happens to carry a plausible real name. Extracting him as a real person is a false positive."
+    },
+    {
+      "surface_forms": ["Diana", "Felix"],
+      "why": "This screenplay's own cast."
+    }
+  ],
+
+  "acceptable_extra": [
+    {
+      "canonical_match": "nielsen",
+      "why": "Nielsen is a real company named in el_5 and el_16. Defensible either way — reported, not penalised."
+    },
+    {
+      "canonical_match": "hopper",
+      "why": "Edward Hopper as a person alongside the artwork record."
+    },
+    {
+      "canonical_match": "picasso",
+      "why": "Pablo Picasso as a person alongside the artwork record."
+    },
+    {
+      "canonical_match": "a_ha",
+      "why": "The band as a separate music/person record alongside the song."
+    },
+    {
+      "canonical_match": "harman",
+      "why": "Marcus Harman also named in dialogue at el_16 and el_19."
+    },
+    {
+      "canonical_match": "shakespeare",
+      "why": "The author alongside the quoted line at el_25."
+    },
+    {
+      "canonical_match": "nobu",
+      "why": "Nobu also named in dialogue at el_43 — a second mention, correctly kept separate."
+    },
+    {
+      "canonical_match": "logo:coca_cola",
+      "why": "The can's logo categorised as `logo` as well as `trademark`. Overlapping categories on one depiction are defensible; C3 collapses them."
+    }
+  ]
+}

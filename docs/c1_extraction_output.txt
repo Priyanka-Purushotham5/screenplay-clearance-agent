@@ -1,0 +1,101 @@
+==============================================================================
+C1 - EXTRACTION AGENT — ACCEPTANCE
+==============================================================================
+  model         : gemini-2.5-flash
+  prompt version: c1-2026-08-13
+  chunk         : ch_1
+  scenes        : 5   elements: 44
+
+------------------------------------------------------------------------------
+EXTRACTED ELEMENTS (26)
+------------------------------------------------------------------------------
+  el_10  action        trademark      'WEA International'              trademark:wea_international        [43:60]        repaired   conf=1.0
+  el_10  action        trademark      'Coca-Cola'                      trademark:coca_cola                [64:73]        repaired   conf=1.0
+  el_10  action        logo           'logo'                           logo:coca_cola                     [94:98]        repaired   conf=0.9
+  el_2   action        music          "'Take On Me'"                   music:take_on_me:a-ha              [78:90]        repaired   conf=1.0
+  el_2   action        music          'a-ha'                           music:a-ha                         [94:98]        repaired   conf=1.0
+  el_2   action        music          'that unmistakable synth riff'   music:take_on_me:a-ha              [115:143]      repaired   conf=0.9
+  el_5   dialogue      trademark      'Nielsen'                        trademark:nielsen                  [4:11]         exact      conf=1.0
+  el_12  action        artwork        'Nighthawks'                     artwork:nighthawks:hopper          [42:52]        repaired   conf=1.0
+  el_12  action        person         'Edward Hopper'                  person:edward_hopper               [56:69]        repaired   conf=1.0
+  el_14  dialogue      music          'that song'                      music:take_on_me:a-ha              [9:18]         exact      conf=0.9
+  el_14  dialogue      music          'Take On Me'                     music:take_on_me:a-ha              [20:30]        exact      conf=1.0
+  el_14  dialogue      music          'that song'                      music:take_on_me:a-ha              [48:57]        repaired   conf=0.9
+  el_16  dialogue      trademark      'Nielsen'                        trademark:nielsen                  [4:11]         exact      conf=1.0
+  el_16  dialogue      person         'Harman'                         person:marcus_harman               [31:37]        exact      conf=0.8
+  el_16  dialogue      person         'Marcus Harman'                  person:marcus_harman               [39:52]        exact      conf=1.0
+  el_19  dialogue      person         'Marcus Harman'                  person:marcus_harman               [4:17]         exact      conf=1.0
+  el_21  action        location       'Nobu'                           location:nobu                      [81:85]        repaired   conf=1.0
+  el_23  dialogue      trademark      'Coca-Cola'                      trademark:coca_cola                [12:21]        repaired   conf=1.0
+  el_23  dialogue      trademark      'Pepsi'                          trademark:pepsi                    [61:66]        repaired   conf=1.0
+  el_25  dialogue      literary       'To be, or not to be -- that is the question' literary:to_be_or_not_to_be_soliloquy:hamlet [0:43]         repaired   conf=1.0
+  el_25  dialogue      person         'Shakespeare'                    person:william_shakespeare         [45:56]        repaired   conf=1.0
+  el_27  action        person         'MARCUS HARMAN'                  person:marcus_harman               [20:33]        exact      conf=1.0
+  el_27  action        person         'the actual music industry executive' person:marcus_harman               [55:90]        repaired   conf=0.8
+  el_28  action        artwork        'Guernica'                       artwork:guernica:picasso           [79:87]        repaired   conf=1.0
+  el_28  action        person         'Pablo Picasso'                  person:pablo_picasso               [91:104]       repaired   conf=1.0
+  el_43  dialogue      location       'Nobu'                           location:nobu                      [66:70]        repaired   conf=1.0
+
+------------------------------------------------------------------------------
+GATE 1 - OFFSETS RE-SLICE TO THE SURFACE FORM
+------------------------------------------------------------------------------
+  26/26 offsets re-slice exactly   (0 unresolved, offsets nulled)
+
+------------------------------------------------------------------------------
+GATE 2 - PLANTED ELEMENTS
+------------------------------------------------------------------------------
+    ok  el_2   music        take_on_me       -> music:take_on_me:a-ha (music, action)
+    ok  el_10  trademark    coca_cola        -> trademark:coca_cola (trademark, action)
+    ok  el_10  trademark    wea              -> trademark:wea_international (trademark, action)
+    ok  el_12  artwork      nighthawks       -> artwork:nighthawks:hopper (artwork, action)
+    ok  el_14  music        take_on_me       -> music:take_on_me:a-ha (music, dialogue)
+    ok  el_21  location     nobu             -> location:nobu (location, action)
+    ok  el_23  trademark    coca_cola        -> trademark:coca_cola (trademark, dialogue)
+    ok  el_23  trademark    pepsi            -> trademark:pepsi (trademark, dialogue)
+    ok  el_25  literary     hamlet           -> literary:to_be_or_not_to_be_soliloquy:hamlet (literary, dialogue)
+    ok  el_27  person       harman           -> person:marcus_harman (person, action)
+    ok  el_28  artwork      guernica         -> artwork:guernica:picasso (artwork, action)
+  recall: 11/11 planted elements found
+
+------------------------------------------------------------------------------
+GATE 3 - FALSE POSITIVES
+------------------------------------------------------------------------------
+  none — the fictional-character trap was not taken
+
+  EXTRAS (15) — reported, not penalised:
+    (new)   el_2   music:a-ha — 'a-ha' in action
+    (new)   el_2   music:take_on_me:a-ha — 'that unmistakable synth riff' in action
+    (known) el_5   trademark:nielsen — 'Nielsen' in dialogue
+    (known) el_10  logo:coca_cola — 'logo' in action
+    (known) el_12  person:edward_hopper — 'Edward Hopper' in action
+    (new)   el_14  music:take_on_me:a-ha — 'Take On Me' in dialogue
+    (new)   el_14  music:take_on_me:a-ha — 'that song' in dialogue
+    (known) el_16  trademark:nielsen — 'Nielsen' in dialogue
+    (known) el_16  person:marcus_harman — 'Harman' in dialogue
+    (known) el_16  person:marcus_harman — 'Marcus Harman' in dialogue
+    (known) el_19  person:marcus_harman — 'Marcus Harman' in dialogue
+    (known) el_25  person:william_shakespeare — 'Shakespeare' in dialogue
+    (known) el_27  person:marcus_harman — 'the actual music industry executive' in action
+    (known) el_28  person:pablo_picasso — 'Pablo Picasso' in action
+    (known) el_43  location:nobu — 'Nobu' in dialogue
+
+------------------------------------------------------------------------------
+THE SPLIT - same entity, different element_type
+------------------------------------------------------------------------------
+  music:take_on_me:a-ha: action, dialogue
+  trademark:coca_cola: action, dialogue
+  person:marcus_harman: action, dialogue
+  location:nobu: action, dialogue
+  (C6 rates action-line mentions and dialogue mentions differently — collapsing them loses the product's core distinction)
+
+------------------------------------------------------------------------------
+STATS
+------------------------------------------------------------------------------
+  returned 26, kept 26, orphans 0
+  offsets: 8 exact, 18 repaired, 0 unresolved
+  tokens : 2645 in, 2315 out, 4355 thinking (billed)
+  attempts 1, wall 43487 ms
+
+==============================================================================
+PASSED: every offset indexes the right substring
+==============================================================================
