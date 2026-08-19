@@ -23,6 +23,9 @@ class Settings(BaseSettings):
 
     upload_dir: str = "./uploads"
 
+    #upload cap - 25MB
+    max_upload_bytes: int = 25 * 1024 * 1024;
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
