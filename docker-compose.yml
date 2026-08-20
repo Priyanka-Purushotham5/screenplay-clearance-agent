@@ -30,36 +30,46 @@ services:
   # ---------------------------------------------------------------
   # API — FastAPI + the ADK agent running as an async background task.
   # Handles upload, orchestrates the agent, streams progress over SSE.
+  #
+  # The build context is the repo root because the code imports itself as
+  # `api.app.*`. Setting it back to ./api breaks every import.
   # ---------------------------------------------------------------
   api:
     build:
-      context: ./api
+      context: .
+      dockerfile: api/Dockerfile
     ports:
       - "8080:8080"
     environment:
       DATABASE_URL: postgresql+asyncpg://clearance:clearance@db:5432/clearance
       UPLOAD_DIR: /data/uploads
       # Credentials come from .env — never commit that file
-      GOOGLE_GENAI_USE_VERTEXAI: "true"
-      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+      GOOGLE_GENAI_USE_VERTEXAI: ${GOOGLE_GENAI_USE_VERTEXAI:-0}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-}
       GOOGLE_CLOUD_LOCATION: ${GOOGLE_CLOUD_LOCATION:-us-central1}
-      PARALLEL_API_KEY: ${PARALLEL_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      PARALLEL_API_KEY: ${PARALLEL_API_KEY:-}
       EXTRACTION_MODEL: ${EXTRACTION_MODEL:-gemini-2.5-flash}
       ASSESSMENT_MODEL: ${ASSESSMENT_MODEL:-gemini-2.5-pro}
-      # OTLP export to Grafana Cloud is optional here; left unset by default
     volumes:
-      # REMOVED: - ./api:/app (was overwriting clean image with corrupted Windows files)
+      # Live code mount, so edits reload without a rebuild. Safe as long as
+      # files are written as UTF-8 — a UTF-16 file mounted in here is what
+      # produced the "source code string cannot contain null bytes" crash.
+      - ./api:/app/api
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
       - uploads:/data/uploads
-      # For Windows with WSL2, gcloud creds mount correctly via ${HOME}
-      # If this fails, comment it out and authenticate inside container:
-      #   docker exec clearance-api-1 gcloud auth application-default login
-      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
+      # Application Default Credentials, for the Vertex AI path in Block C.
+      # Windows keeps them in %APPDATA%\gcloud, NOT ~/.config/gcloud, so set
+      # GCLOUD_CONFIG_DIR in .env, e.g.
+      #   GCLOUD_CONFIG_DIR=C:/Users/Priyanka/AppData/Roaming/gcloud
+      - ${GCLOUD_CONFIG_DIR:-./.gcloud}:/root/.config/gcloud:ro
     depends_on:
       db:
         condition: service_healthy
     command: >
-      uvicorn app.main:app
-      --host 0.0.0.0 --port 8080
+      uvicorn api.app.main:app
+      --host 0.0.0.0 --port 8080 --reload --reload-dir /app/api
     # Single worker on purpose: agent runs live in-process and stream
     # progress to SSE clients through an in-memory bus. Multiple workers
     # would split that bus across processes and break the live feed.

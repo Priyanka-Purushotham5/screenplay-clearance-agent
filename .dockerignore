@@ -1,0 +1,15 @@
+# keeping the context small since the api image builds from the repor root
+.git
+.gitignore
+.env
+web/
+uploads/
+docs/
+*.md
+__pycache__/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.gcloud/
