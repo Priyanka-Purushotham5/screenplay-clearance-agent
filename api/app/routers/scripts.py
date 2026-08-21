@@ -24,7 +24,7 @@ from api.app.config import settings
 from api.app.db import get_session
 from api.app.errors import ApiError
 from api.app.models import Script
-from api.app.parser.pdf import UnparseablePDF, page_count
+from api.app.parser.pdf import UnparseablePDF, inspect_pdf
 from api.app.schemas import ERROR_RESPONSES, ApiErrorOut, ScriptOut
 from api.app.uploads import (
     EmptyUpload,
@@ -121,17 +121,30 @@ async def create_script(
         if existing is not None:
             return _out(existing, duplicate_of=existing.id)
 
-        # 3. Page count, off-thread
+        # 3. Inspect the PDF, off-thread
         # pdfplumber is slow and blocking, and this worker also has to
         # serve the SSE stream in Block C.
         try:
-            pages = await anyio.to_thread.run_sync(page_count, staged.path)
+            report = await anyio.to_thread.run_sync(inspect_pdf, staged.path)
         except UnparseablePDF as exc:
             raise ApiError(
                 status.HTTP_422_UNPROCESSABLE_ENTITY,
                 "UNPARSEABLE_PDF",
                 "The file starts with %PDF but could not be opened.",
             ) from exc
+
+        # ── 3b. Reject scans before anything is stored (B3) ────────────
+        # A scan is a photograph of a page: visually complete, textually
+        # empty. Rejecting it here means the user finds out while the file
+        # is still in front of them, and nothing unusable enters storage.
+        if not report.has_text_layer:
+            raise ApiError(
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "NO_TEXT_LAYER",
+                "This PDF has no text layer - it looks like a scan. "
+                "Re-export it from the original, or use a text-based PDF.",
+                pages_checked=report.pages_checked,
+            )
 
         #  4. Move into permanent storage
         script_id = uuid.uuid4()
@@ -146,9 +159,9 @@ async def create_script(
             storage_path=key,
             sha256=staged.sha256,
             source_format="pdf",
-            page_count=pages,
+            page_count=report.page_count,
             scene_count=0,  # B5 fills this in
-            parse_warnings=[],
+            parse_warnings= report.warnings()
         )
         session.add(script)
         try:

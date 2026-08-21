@@ -12,7 +12,7 @@ generated types silently stop matching the components that consume them.
 from __future__ import annotations
 
 import uuid
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 from pydantic import BaseModel
 
@@ -46,9 +46,23 @@ class ApiErrorOut(BaseModel):
     code: str
     detail: str
 
+class NoTextLayerOut(BaseModel):
+    """Mirrors `NoTextLayerError` — the one 422 the upload screen special-cases.
+
+    web/app/page.tsx reads `body.code` and shows a specific message telling
+    the user to re-export, rather than the generic upload failure.
+    """
+
+    code: Literal["NO_TEXT_LAYER"]
+    detail: str
+    pages_checked: int
+
 
 ERROR_RESPONSES: dict = {
     413: {"model": ApiErrorOut, "description": "File exceeds the 25 MB cap"},
     415: {"model": ApiErrorOut, "description": "Not a PDF"},
-    422: {"model": ApiErrorOut, "description": "PDF could not be parsed"},
+    422: {
+        "model": Union[NoTextLayerOut, ApiErrorOut],
+        "description": "Scanned PDF (NO_TEXT_LAYER), or unparseable",
+    },
 }
