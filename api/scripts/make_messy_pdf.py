@@ -103,8 +103,12 @@ def main() -> int:
 
     pitch = 14.0
     pdf = canvas.Canvas(str(DEST), pagesize=letter)
-    pdf.setFont("Courier", 12)
     for page in PAGES:
+        # setFont at the *start* of each page. Calling it after the final
+        # showPage() writes to a fresh content stream, and save() then emits
+        # that as a trailing blank page - invisible to extract_lines, which
+        # skips empty pages, but page_count sees it.
+        pdf.setFont("Courier", 12)
         y = 792 - 90
         first = True
         for row in page:
@@ -124,7 +128,6 @@ def main() -> int:
             column = "character" if kind == "more" else kind
             pdf.drawString(jitter(MARGINS[column]), y, row[1])
         pdf.showPage()
-        pdf.setFont("Courier", 12)
     pdf.save()
     print(f"wrote {DEST.relative_to(ROOT)}  ({DEST.stat().st_size / 1024:.0f} KB)")
     return 0

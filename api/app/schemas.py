@@ -14,7 +14,7 @@ from __future__ import annotations
 import uuid
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ScriptOut(BaseModel):
@@ -39,6 +39,44 @@ class ScriptOut(BaseModel):
     # original back rather than a second copy.
     duplicate_of: Optional[uuid.UUID]
 
+class ScriptElementOut(BaseModel):
+    """Mirrors the `ScriptElement` interface in web/lib/api-types.ts."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    scene_id: uuid.UUID
+    seq: int
+    type: Literal[
+        "scene_heading", "action", "character", "dialogue",
+        "parenthetical", "transition",
+    ]
+    character: Optional[str]
+    page: int
+    text: str
+
+
+class SceneOut(BaseModel):
+    """Mirrors the `Scene` interface in web/lib/api-types.ts."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    script_id: uuid.UUID
+    number: int
+    int_ext: Optional[Literal["INT", "EXT", "INT/EXT"]]
+    location: Optional[str]
+    time_of_day: Optional[str]
+    heading: str
+    page_start: int
+    page_end: int
+    elements: list[ScriptElementOut]
+
+
+class ScenesOut(BaseModel):
+    """The scenes endpoint returns an object, not a bare array."""
+
+    scenes: list[SceneOut]
 
 class ApiErrorOut(BaseModel):
     """Mirrors `ApiError` in the frontend, plus a machine-readable `code`."""
