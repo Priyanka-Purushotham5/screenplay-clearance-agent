@@ -1,0 +1,402 @@
+{
+ "test_screenplay.pdf": [
+  [
+   1,
+   "scene_heading",
+   null,
+   "INT. RECORD LABEL OFFICE - DAY"
+  ],
+  [
+   1,
+   "action",
+   null,
+   "A cluttered A&R office. Gold records line the walls. On a battered turntable, 'Take On Me' by a-ha plays loudly -- that unmistakable synth riff filling the room."
+  ],
+  [
+   1,
+   "action",
+   null,
+   "DIANA (40s, sharp) stands at the window, back to us. Her assistant, FELIX (20s, nervous), hovers in the doorway."
+  ],
+  [
+   1,
+   "character",
+   "FELIX",
+   "FELIX"
+  ],
+  [
+   1,
+   "dialogue",
+   "FELIX",
+   "The Nielsen rep is here. And... he brought lawyers."
+  ],
+  [
+   1,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   1,
+   "dialogue",
+   "DIANA",
+   "Of course he did. Turn that off."
+  ],
+  [
+   1,
+   "action",
+   null,
+   "Felix crosses to the turntable and lifts the needle."
+  ],
+  [
+   1,
+   "action",
+   null,
+   "ANGLE ON -- THE TURNTABLE"
+  ],
+  [
+   1,
+   "action",
+   null,
+   "The spinning vinyl slows. The label reads: WEA International. A Coca-Cola can sits beside it, logo facing the lens."
+  ],
+  [
+   1,
+   "scene_heading",
+   null,
+   "INT. RECORD LABEL OFFICE - CONTINUOUS"
+  ],
+  [
+   1,
+   "action",
+   null,
+   "Diana turns. On the wall behind her hangs Nighthawks by Edward Hopper, a large print in a thin black frame."
+  ],
+  [
+   1,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   1,
+   "dialogue",
+   "DIANA",
+   "You know that song? Take On Me? I actually love that song. It reminds me why I got into this business."
+  ],
+  [
+   1,
+   "character",
+   "FELIX",
+   "FELIX"
+  ],
+  [
+   1,
+   "dialogue",
+   "FELIX",
+   "The Nielsen rep -- his name is Harman. Marcus Harman."
+  ],
+  [
+   1,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   1,
+   "parenthetical",
+   "DIANA",
+   "(dry)"
+  ],
+  [
+   1,
+   "dialogue",
+   "DIANA",
+   "The Marcus Harman? I thought he retired."
+  ],
+  [
+   2,
+   "scene_heading",
+   null,
+   "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON"
+  ],
+  [
+   2,
+   "action",
+   null,
+   "Diana drives. Felix rides shotgun, scrolling his phone. They pass a brightly lit Nobu restaurant -- Diana glances at it."
+  ],
+  [
+   2,
+   "character",
+   "FELIX",
+   "FELIX"
+  ],
+  [
+   2,
+   "dialogue",
+   "FELIX",
+   "He says the Coca-Cola deal is dead. They found out about the Pepsi placement last quarter. Now they're threatening to pull their entire catalog."
+  ],
+  [
+   2,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   2,
+   "dialogue",
+   "DIANA",
+   "To be, or not to be -- that is the question. Shakespeare said that and it's still the only thing worth saying in a negotiation."
+  ],
+  [
+   2,
+   "scene_heading",
+   null,
+   "INT. LAW FIRM - CONFERENCE ROOM - NIGHT"
+  ],
+  [
+   2,
+   "action",
+   null,
+   "A long glass table. MARCUS HARMAN (60s, silver-haired, the actual music industry executive) sits at one end."
+  ],
+  [
+   2,
+   "action",
+   null,
+   "Across from him, Diana. Between them, a stack of contracts. A framed poster of Guernica by Pablo Picasso dominates the far wall."
+  ],
+  [
+   2,
+   "character",
+   "MARCUS",
+   "MARCUS"
+  ],
+  [
+   2,
+   "dialogue",
+   "MARCUS",
+   "Your client Dr. James Holloway signed a personal guarantee. The debt is real."
+  ],
+  [
+   2,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   2,
+   "dialogue",
+   "DIANA",
+   "Dr. Holloway disagrees. And frankly, so do I."
+  ],
+  [
+   2,
+   "character",
+   "MARCUS",
+   "MARCUS"
+  ],
+  [
+   2,
+   "dialogue",
+   "MARCUS",
+   "Then we'll let the courts decide. I've been doing this for forty years. I have never lost a contract dispute."
+  ],
+  [
+   3,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   3,
+   "dialogue",
+   "DIANA",
+   "There's always a first time."
+  ],
+  [
+   3,
+   "scene_heading",
+   null,
+   "I/E. PARKING GARAGE - NIGHT"
+  ],
+  [
+   3,
+   "action",
+   null,
+   "Diana walks to her car alone. Her footsteps echo. She stops at a concrete pillar. Leans against it. Closes her eyes."
+  ],
+  [
+   3,
+   "action",
+   null,
+   "MOMENTS LATER"
+  ],
+  [
+   3,
+   "action",
+   null,
+   "She opens her eyes. Takes out her phone. Dials."
+  ],
+  [
+   3,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   3,
+   "parenthetical",
+   "DIANA",
+   "(into phone)"
+  ],
+  [
+   3,
+   "dialogue",
+   "DIANA",
+   "It's me. We need to talk about the Holloway situation. Meet me at Nobu. Twenty minutes."
+  ],
+  [
+   3,
+   "transition",
+   null,
+   "FADE OUT."
+  ]
+ ],
+ "messy_screenplay.pdf": [
+  [
+   1,
+   "scene_heading",
+   null,
+   "14 INT. DINER - KITCHEN - NIGHT 14"
+  ],
+  [
+   1,
+   "action",
+   null,
+   "Steam. A radio plays 'Take On Me'. SARAH scrubs a pan."
+  ],
+  [
+   1,
+   "character",
+   "SARAH",
+   "SARAH"
+  ],
+  [
+   1,
+   "parenthetical",
+   "SARAH",
+   "(not looking up)"
+  ],
+  [
+   1,
+   "dialogue",
+   "SARAH",
+   "You brought him here? To my kitchen?"
+  ],
+  [
+   1,
+   "character",
+   "MARCUS",
+   "MARCUS"
+  ],
+  [
+   1,
+   "dialogue",
+   "MARCUS",
+   "He asked for you by name."
+  ],
+  [
+   1,
+   "action",
+   null,
+   "She sets the pan down. Turns."
+  ],
+  [
+   1,
+   "character",
+   "SARAH",
+   "SARAH"
+  ],
+  [
+   1,
+   "dialogue",
+   "SARAH",
+   "Then he can ask again tomorrow, and the answer will be the same one I gave him the first time."
+  ],
+  [
+   2,
+   "transition",
+   null,
+   "CUT TO:"
+  ],
+  [
+   2,
+   "scene_heading",
+   null,
+   "15 EXT. PARKING LOT - CONTINUOUS 15"
+  ],
+  [
+   2,
+   "action",
+   null,
+   "Marcus follows her out. A Coca-Cola machine hums."
+  ],
+  [
+   2,
+   "character",
+   "MARCUS",
+   "MARCUS"
+  ],
+  [
+   2,
+   "dialogue",
+   "MARCUS",
+   "Sarah. The Holloway estate is real."
+  ],
+  [
+   2,
+   "action",
+   null,
+   "ANGLE ON -- THE MACHINE"
+  ],
+  [
+   2,
+   "action",
+   null,
+   "The logo, dead centre. She kicks it."
+  ],
+  [
+   3,
+   "character",
+   "MARCUS",
+   "MARCUS"
+  ],
+  [
+   3,
+   "dialogue",
+   "MARCUS",
+   "That's not an answer."
+  ],
+  [
+   3,
+   "action",
+   null,
+   "MOMENTS LATER"
+  ],
+  [
+   3,
+   "action",
+   null,
+   "The lot is empty. Rain starts."
+  ],
+  [
+   3,
+   "transition",
+   null,
+   "FADE OUT."
+  ]
+ ]
+}
