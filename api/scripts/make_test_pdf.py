@@ -12,9 +12,14 @@ A ~4-page properly formatted screenplay containing:
   - A living public figure named in dialogue
   - A real restaurant as a location
   - A line of Shakespeare
+  - The same brand used disparagingly
 
 These are the planted elements from B7 in implementation-checklist.md.
-Ground truth for expected ratings is in docs/ground-truth.md (to be written).
+
+The expected rating for each one, and the reasoning behind it, lives in
+docs/ground-truth.md — that file is the answer key, and this docstring is
+deliberately not a second copy of it. api/scripts/verify_b7.py checks the
+key against whatever this script actually produces.
 
 Run:
     python api/scripts/make_test_pdf.py
@@ -283,6 +288,45 @@ def build(pdf: ScreenplayPDF):
         "Meet me at Nobu. Twenty minutes."
     )
 
+    pdf.transition("CUT TO:")
+
+    # --- Scene 6: the same brand, used disparagingly (RED) ---
+    pdf.scene_heading("INT. ALL-NIGHT DINER - LATER")
+    pdf.action(
+        "A vinyl booth under a flickering strip light. Felix slides "
+        "a Coca-Cola bottle across the Formica. Diana does not touch it."
+    )
+    pdf.character("FELIX")
+    pdf.dialogue(
+        "I got you a Coke."
+    )
+    pdf.character("DIANA")
+    pdf.dialogue(
+        "Coca-Cola tastes like syrup and battery acid. It rots your "
+        "teeth out of your head and they put a polar bear on the can "
+        "so nobody notices. I wouldn't pour it down a drain."
+    )
+    pdf.action(
+        "She pushes the bottle to the far edge of the table."
+    )
+
+    # --- Scene 7: a living public figure named in dialogue (AMBER) ---
+    pdf.scene_heading("EXT. NOBU - SIDEWALK - NIGHT")
+    pdf.action(
+        "Diana waits under the awning. Felix catches up, out of breath."
+    )
+    pdf.character("FELIX")
+    pdf.dialogue(
+        "There's another way through this. Taylor Swift re-recorded her "
+        "first six albums when she couldn't buy the masters back. "
+        "Holloway could do exactly the same thing."
+    )
+    pdf.character("DIANA")
+    pdf.dialogue(
+        "Taylor Swift had thirty million people waiting for her. "
+        "Holloway has a lawyer and a mortgage."
+    )
+
     pdf.transition("FADE OUT.")
 
 
@@ -298,16 +342,9 @@ def main():
     print(f"Written: {OUTPUT}  ({size_kb:.1f} KB)")
     print(f"Pages  : {pdf.page}")
     print()
-    print("Planted elements:")
-    print("  RED   - 'Take On Me' by a-ha in action line (sync rights)")
-    print("  GREEN - 'Take On Me' referenced in dialogue (no sync)")
-    print("  AMBER - Coca-Cola can held to camera (brand depiction)")
-    print("  RED   - Nighthawks by Hopper on wall (Hopper died 1967, within 70yr)")
-    print("  AMBER - Nobu restaurant as location (trade dress)")
-    print("  GREEN - Shakespeare quote (public domain)")
-    print("  AMBER - Marcus Harman (living public figure, named in dialogue)")
-    print("  HARD  - Dr. James Holloway (fictional doctor, plausible real name)")
-    print("  EXTRA - Guernica / Picasso (died 1973, estate holds until 2044)")
+    print("Expected ratings: docs/ground-truth.md (and ground-truth.json)")
+    print("Verify the key still describes this document:")
+    print("    python api/scripts/verify_b7.py")
     print()
     print("Parser edge cases:")
     print("  - ANGLE ON mini-slug (must NOT create a new scene)")
