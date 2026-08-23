@@ -54,8 +54,8 @@ def main() -> int:
         r = c.post("/api/scripts", files={"file": (clean.name, salted(clean), "application/pdf")})
         body = r.json()
         check("Upload returns 201", r.status_code == 201, str(r.status_code))
-        check("page_count is real", body.get("page_count") == 3, f"{body.get('page_count')}")
-        check("scene_count is real", body.get("scene_count") == 5, f"{body.get('scene_count')}")
+        check("page_count is real", body.get("page_count") == 4, f"{body.get('page_count')}")
+        check("scene_count is real", body.get("scene_count") == 7, f"{body.get('scene_count')}")
         sid = body["script_id"]
 
         s = c.get(f"/api/scripts/{sid}/scenes")
@@ -73,7 +73,7 @@ def main() -> int:
               all(set(e) == ELEMENT_FIELDS for e in elements),
               str(sorted(set(elements[0]) ^ ELEMENT_FIELDS)) if elements else "none")
 
-        check("All 44 elements were persisted", len(elements) == 44, str(len(elements)))
+        check("All 58 elements were persisted", len(elements) == 58, str(len(elements)))
         check("seq is 1-based and contiguous within each scene",
               all([e["seq"] for e in sc["elements"]] == list(range(1, len(sc["elements"]) + 1))
                   for sc in scenes))

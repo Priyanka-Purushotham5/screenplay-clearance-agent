@@ -262,6 +262,90 @@
    3,
    "transition",
    null,
+   "CUT TO:"
+  ],
+  [
+   3,
+   "scene_heading",
+   null,
+   "INT. ALL-NIGHT DINER - LATER"
+  ],
+  [
+   3,
+   "action",
+   null,
+   "A vinyl booth under a flickering strip light. Felix slides a Coca-Cola bottle across the Formica. Diana does not touch it."
+  ],
+  [
+   3,
+   "character",
+   "FELIX",
+   "FELIX"
+  ],
+  [
+   3,
+   "dialogue",
+   "FELIX",
+   "I got you a Coke."
+  ],
+  [
+   3,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   3,
+   "dialogue",
+   "DIANA",
+   "Coca-Cola tastes like syrup and battery acid. It rots your teeth out of your head and they put a polar bear on the can so nobody notices. I wouldn't pour it down a drain."
+  ],
+  [
+   3,
+   "action",
+   null,
+   "She pushes the bottle to the far edge of the table."
+  ],
+  [
+   3,
+   "scene_heading",
+   null,
+   "EXT. NOBU - SIDEWALK - NIGHT"
+  ],
+  [
+   4,
+   "action",
+   null,
+   "Diana waits under the awning. Felix catches up, out of breath."
+  ],
+  [
+   4,
+   "character",
+   "FELIX",
+   "FELIX"
+  ],
+  [
+   4,
+   "dialogue",
+   "FELIX",
+   "There's another way through this. Taylor Swift re-recorded her first six albums when she couldn't buy the masters back. Holloway could do exactly the same thing."
+  ],
+  [
+   4,
+   "character",
+   "DIANA",
+   "DIANA"
+  ],
+  [
+   4,
+   "dialogue",
+   "DIANA",
+   "Taylor Swift had thirty million people waiting for her. Holloway has a lawyer and a mortgage."
+  ],
+  [
+   4,
+   "transition",
+   null,
    "FADE OUT."
   ]
  ],

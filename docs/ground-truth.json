@@ -1,0 +1,268 @@
+{
+  "_comment": [
+    "Machine-readable answer key for docs/test_screenplay.pdf.",
+    "The prose version, with full reasoning, is docs/ground-truth.md.",
+    "api/scripts/verify_b7.py checks this file against the real parsed",
+    "screenplay and against the markdown table, so the two cannot drift.",
+    "",
+    "Anchoring: entries are located by (scene, element_type, quote), never",
+    "by element index. Index-based anchors break the moment a scene is",
+    "inserted; a quote that no longer appears is a loud, obvious failure."
+  ],
+  "fixture": "docs/test_screenplay.pdf",
+  "fixture_scenes": 7,
+  "fixture_elements": 58,
+  "ratings": {
+    "RED": "Cannot be shot as written. Needs a signed licence or consent, or a rewrite.",
+    "AMBER": "Can be shot, but generates a clearance action: a release, a placement deal, an art-department substitution, or a line in the E&O report.",
+    "GREEN": "No action required."
+  },
+  "entries": [
+    {
+      "id": "gt_01",
+      "scene": 1,
+      "element_type": "action",
+      "quote": "'Take On Me' by a-ha plays loudly",
+      "category": "music",
+      "canonical": "music:take_on_me:a-ha",
+      "rating": "RED",
+      "set": "A",
+      "checklist": "song-in-action",
+      "rationale": "A named commercial recording audibly playing in the scene needs two separate clearances: a synchronisation licence from the publisher for the composition, and a master use licence from the label for that specific recording. The action line pins the recording ('that unmistakable synth riff'), so a soundalike would not satisfy it without a rewrite.",
+      "action": "Obtain sync + master use, or rewrite to an unnamed or library cue."
+    },
+    {
+      "id": "gt_02",
+      "scene": 2,
+      "element_type": "dialogue",
+      "quote": "You know that song? Take On Me?",
+      "category": "music",
+      "canonical": "music:take_on_me:a-ha",
+      "rating": "GREEN",
+      "set": "A",
+      "checklist": "song-in-dialogue",
+      "rationale": "A character speaking a song title is not a use of the work. Titles are too short to carry copyright, and no recording is reproduced. The boundary is lyrics: had the line quoted even one line of the lyric, this would flip to RED.",
+      "action": "None."
+    },
+    {
+      "id": "gt_03",
+      "scene": 1,
+      "element_type": "action",
+      "quote": "A Coca-Cola can sits beside it, logo facing the lens.",
+      "category": "trademark",
+      "canonical": "trademark:coca_cola",
+      "rating": "AMBER",
+      "set": "B",
+      "checklist": "brand-held-to-camera",
+      "rationale": "Trademark law targets confusion as to source, not depiction, so a real product on a set is ordinarily fine. What lifts this above incidental is the deliberate framing: 'logo facing the lens' reads as placement, which invites either a placement agreement or a note to turn the can.",
+      "action": "Placement agreement, or dress with a generic and turn the label away."
+    },
+    {
+      "id": "gt_04",
+      "scene": 3,
+      "element_type": "dialogue",
+      "quote": "He says the Coca-Cola deal is dead.",
+      "category": "trademark",
+      "canonical": "trademark:coca_cola",
+      "rating": "GREEN",
+      "set": "B",
+      "checklist": "brand-in-dialogue",
+      "rationale": "Nominative reference to a real company inside a business conversation. Neutral, no product claim, nothing depicted. This is ordinary speech about the commercial world and needs no permission.",
+      "action": "None."
+    },
+    {
+      "id": "gt_05",
+      "scene": 6,
+      "element_type": "dialogue",
+      "quote": "Coca-Cola tastes like syrup and battery acid.",
+      "category": "trademark",
+      "canonical": "trademark:coca_cola",
+      "rating": "RED",
+      "set": "B",
+      "checklist": "brand-disparaged",
+      "rationale": "No longer depiction or reference: a named brand is attacked, and the attack carries a factual-sounding health claim ('rots your teeth out of your head'). Exposure runs to tarnishment and to trade libel, since the claim is stated as fact rather than opinion. The line also invokes the polar bear, an advertising character of the same owner. No placement deal will be offered for this; standard practice is to invent a brand before shooting.",
+      "action": "Rename to a fictional brand, or cut the product claim and keep it clearly opinion."
+    },
+    {
+      "id": "gt_06",
+      "scene": 3,
+      "element_type": "dialogue",
+      "quote": "They found out about the Pepsi placement last quarter.",
+      "category": "trademark",
+      "canonical": "trademark:pepsi",
+      "rating": "GREEN",
+      "set": null,
+      "checklist": "brand-in-dialogue",
+      "rationale": "A second real brand named neutrally in the same element as gt_04. It is here so that extraction is tested on two distinct entities inside one line of dialogue, which is where naive span-based extractors tend to return only the first.",
+      "action": "None."
+    },
+    {
+      "id": "gt_07",
+      "scene": 1,
+      "element_type": "action",
+      "quote": "The label reads: WEA International.",
+      "category": "trademark",
+      "canonical": "trademark:wea_international",
+      "rating": "AMBER",
+      "set": null,
+      "checklist": "brand-held-to-camera",
+      "rationale": "A real Warner-owned label name, legible on a prop. Same category as gt_03 but far less prominent, which is exactly why it is worth having: a rubric that cannot separate 'legible on a prop' from 'held to the lens' will over-rate one or under-rate the other.",
+      "action": "Art-department clearance on the prop, or a fictional label."
+    },
+    {
+      "id": "gt_08",
+      "scene": 1,
+      "element_type": "dialogue",
+      "quote": "The Nielsen rep is here.",
+      "category": "trademark",
+      "canonical": "trademark:nielsen",
+      "rating": "GREEN",
+      "set": null,
+      "checklist": "brand-in-dialogue",
+      "rationale": "A real company named neutrally in dialogue. Included because the extraction agent does pick it up, and an answer key that stays silent about a real extracted entity cannot tell a false positive from a correct find.",
+      "action": "None."
+    },
+    {
+      "id": "gt_09",
+      "scene": 2,
+      "element_type": "action",
+      "quote": "Nighthawks by Edward Hopper",
+      "category": "artwork",
+      "canonical": "artwork:nighthawks:hopper",
+      "rating": "RED",
+      "set": null,
+      "checklist": "20th-century-painting",
+      "rationale": "Painted 1942; Hopper died 1967. Protected in the United States as a published 1942 work with renewal, and in life-plus-70 territories until 2038 either way. The script hangs 'a large print' on the wall, so the whole work is reproduced, prominent and sustained. That is not de minimis.",
+      "action": "Licence the reproduction, or replace with cleared or public-domain art."
+    },
+    {
+      "id": "gt_10",
+      "scene": 4,
+      "element_type": "action",
+      "quote": "Guernica by Pablo Picasso",
+      "category": "artwork",
+      "canonical": "artwork:guernica:picasso",
+      "rating": "RED",
+      "set": null,
+      "checklist": "20th-century-painting",
+      "rationale": "Painted 1937; Picasso died 1973, so life-plus-70 runs to 2043, and the estate licenses and enforces actively. 'Dominates the far wall' makes it prominent and sustained. A second artwork exists so that a rubric cannot pass by special-casing a single famous title.",
+      "action": "Licence the reproduction, or replace with cleared or public-domain art."
+    },
+    {
+      "id": "gt_11",
+      "scene": 3,
+      "element_type": "action",
+      "quote": "a brightly lit Nobu restaurant",
+      "category": "location",
+      "canonical": "location:nobu",
+      "rating": "AMBER",
+      "set": "C",
+      "checklist": "real-restaurant-location",
+      "rationale": "A real, named, operating business, identifiable on screen. A passing exterior in a driving shot is close to incidental, but the name is scripted and the frontage is trade dress, so production wants a location agreement if shooting there or a name change if not.",
+      "action": "Location agreement, or rename the restaurant."
+    },
+    {
+      "id": "gt_12",
+      "scene": 5,
+      "element_type": "dialogue",
+      "quote": "Meet me at Nobu.",
+      "category": "location",
+      "canonical": "location:nobu",
+      "rating": "GREEN",
+      "set": "C",
+      "checklist": "real-restaurant-location",
+      "rationale": "Naming a real restaurant in dialogue depicts nothing and implies no association. It is the same distinction as gt_01 versus gt_02, transposed from music to premises, which is the point of having it: the rule generalises or it does not.",
+      "action": "None."
+    },
+    {
+      "id": "gt_13",
+      "scene": 3,
+      "element_type": "dialogue",
+      "quote": "To be, or not to be -- that is the question.",
+      "category": "literary",
+      "canonical": "literary:hamlet:shakespeare",
+      "rating": "GREEN",
+      "set": null,
+      "checklist": "shakespeare-line",
+      "rationale": "Hamlet, c.1600, public domain everywhere. The trap is that this is unmistakably a quotation from a famous literary work, and a tool that flags quotation as such will rate it RED. Age of the work is the whole answer, and it is the same reasoning that makes gt_09 and gt_10 RED rather than GREEN.",
+      "action": "None."
+    },
+    {
+      "id": "gt_14",
+      "scene": 7,
+      "element_type": "dialogue",
+      "quote": "Taylor Swift re-recorded her first six albums",
+      "category": "person",
+      "canonical": "person:taylor_swift",
+      "rating": "AMBER",
+      "set": null,
+      "checklist": "living-public-figure",
+      "rationale": "A living public figure named in dialogue. The statement is true, a matter of public record, non-defamatory, and implies no endorsement, which places it inside ordinary expressive use and the newsworthiness exception to right of publicity. It is AMBER rather than GREEN because the name has commercial value and because E&O insurers routinely require a real-person report on any named living individual before binding coverage. Paperwork, not a blocker.",
+      "action": "Real-person clearance report. No consent needed while the reference stays factual and incidental."
+    },
+    {
+      "id": "gt_15",
+      "scene": 4,
+      "element_type": "action",
+      "quote": "MARCUS HARMAN (60s, silver-haired, the actual music industry executive)",
+      "category": "person",
+      "canonical": "person:marcus_harman",
+      "rating": "GREEN",
+      "set": null,
+      "requires_evidence": true,
+      "checklist": "fictional-name",
+      "rationale": "Marcus Harman is invented. The parenthetical 'the actual music industry executive' is bait: it asserts, inside the fiction, that the character is real. The correct answer is that no such public figure exists and there is nothing to clear. The correct *behaviour* is to establish that by searching rather than by assuming, because the failure mode here is silent.",
+      "action": "None, once a name search returns no identifiable individual. The finding must cite the search."
+    },
+    {
+      "id": "gt_16",
+      "scene": 4,
+      "element_type": "dialogue",
+      "quote": "Your client Dr. James Holloway signed a personal guarantee.",
+      "category": "person",
+      "canonical": "person:james_holloway",
+      "rating": "GREEN",
+      "set": null,
+      "requires_evidence": true,
+      "checklist": "fictional-doctor",
+      "rationale": "A fictional character with a plausible real name, a real profession, and an unflattering depiction: a debtor disputing a personal guarantee. This is the textbook name-clearance case, because a real and identifiable Dr. James Holloway would have a defamation claim. GREEN is conditional on a name search finding no such individual, and an honest finding recommends a formal name clearance regardless.",
+      "action": "Name clearance search. If a real match surfaces in the same profession, change the name."
+    }
+  ],
+  "discrimination_sets": {
+    "A": {
+      "entity": "Take On Me",
+      "members": ["gt_01", "gt_02"],
+      "why": "Heard in an action line versus named in dialogue. Same work, opposite ratings."
+    },
+    "B": {
+      "entity": "Coca-Cola",
+      "members": ["gt_03", "gt_04", "gt_05"],
+      "why": "Depicted, referenced neutrally, and disparaged. One entity, three ratings."
+    },
+    "C": {
+      "entity": "Nobu",
+      "members": ["gt_11", "gt_12"],
+      "why": "Depicted as a location versus spoken in dialogue. Tests whether the action/dialogue rule generalises past music."
+    }
+  },
+  "must_not_flag": [
+    {
+      "quote": "Shakespeare said that",
+      "scene": 3,
+      "why": "Shakespeare died in 1616. A person-clearance finding on him is a false positive, and a useful one to catch: it shows the rubric is matching on 'named person' rather than on whether a right survives."
+    },
+    {
+      "quote": "DIANA (40s, sharp) stands at the window",
+      "scene": 1,
+      "why": "Character introductions are not real people. Flagging them would drown the review UI in noise."
+    }
+  ],
+  "acceptable_either_way": [
+    {
+      "quote": "across the Formica",
+      "scene": 6,
+      "why": "Formica is a registered trademark used here generically for a countertop surface, not depicted as a branded product. It was not planted deliberately; it is recorded because it is genuinely borderline. Flagging it AMBER is defensible and missing it is defensible, so it is scored neither way."
+    }
+  ]
+}

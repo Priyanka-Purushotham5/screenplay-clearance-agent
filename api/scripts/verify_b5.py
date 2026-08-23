@@ -79,7 +79,7 @@ def main() -> int:
 
     # ── grouping, against both fixtures ────────────────────────────────
     runs = {}
-    for name, expected_scenes in (("test_screenplay.pdf", 5), ("messy_screenplay.pdf", 2)):
+    for name, expected_scenes in (("test_screenplay.pdf", 7), ("messy_screenplay.pdf", 2)):
         path = ROOT / "docs" / name
         if not path.exists():
             print(f"Fixture missing: {path}")
@@ -124,7 +124,7 @@ def main() -> int:
     _, clean = runs["test_screenplay.pdf"]
     _, messy = runs["messy_screenplay.pdf"]
     check("A script without printed numbers is numbered by position",
-          [s.number for s in clean.scenes] == [1, 2, 3, 4, 5],
+          [s.number for s in clean.scenes] == list(range(1, len(clean.scenes) + 1)),
           str([s.number for s in clean.scenes]))
     check("A script with printed numbers keeps them",
           [s.number for s in messy.scenes] == [14, 15],
