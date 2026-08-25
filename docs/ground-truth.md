@@ -55,8 +55,28 @@ Parses with zero warnings.
 | gt_14 | 7 | dialogue | Taylor Swift | AMBER | — |
 | gt_15 | 4 | action | Marcus Harman | GREEN | — |
 | gt_16 | 4 | dialogue | Dr. James Holloway | GREEN | — |
+| gt_17 | 1 | dialogue | Take On Me (a-ha) | RED | A |
+| gt_18 | 2 | dialogue | Marcus Harman · as gt_15 | GREEN | — |
+| gt_19 | 2 | dialogue | Marcus Harman · as gt_15 | GREEN | — |
+| gt_20 | 2 | dialogue | Nielsen · as gt_08 | GREEN | — |
+| gt_21 | 6 | action | Coca-Cola | AMBER | B |
+| gt_22 | 6 | dialogue | Coca-Cola · as gt_04 | GREEN | B |
+| gt_23 | 7 | dialogue | Taylor Swift · as gt_14 | AMBER | — |
 
-Tally: 4 RED, 4 AMBER, 8 GREEN.
+Tally: 5 RED, 6 AMBER, 12 GREEN.
+
+**gt_17 to gt_23 were added by reconciliation, not by reading.** C3's grouping
+compared every extracted mention against this key and found seven positions in
+the screenplay that no entry covered. Five of them are repeat mentions of
+entities already reasoned about — marked `· as gt_NN` above, and carrying
+`same_as` in the JSON so a scorer can rate them without the reasoning being
+duplicated and drifting. Two needed a fresh judgement and have their own
+sections below.
+
+The lesson is worth keeping: a key written by reading the screenplay and a
+pipeline reading the same screenplay do not enumerate the same things. The
+reconciliation is a check in `verify_c3.py`, so the gap is reported rather
+than discovered.
 
 ## Discrimination sets — the part that matters
 
@@ -64,11 +84,11 @@ Rating each item correctly in isolation is the easy half. What proves the
 pipeline is reading *context* rather than matching entity names is that the
 same entity gets different ratings in different places.
 
-| Set | Entity | Members | Must be |
+| Set | Entity | Members | Must span |
 |---|---|---|---|
-| **A** | Take On Me | gt_01, gt_02 | RED ≠ GREEN |
-| **B** | Coca-Cola | gt_03, gt_04, gt_05 | AMBER ≠ GREEN ≠ RED |
-| **C** | Nobu | gt_11, gt_12 | AMBER ≠ GREEN |
+| **A** | Take On Me | gt_01, gt_02, gt_17 | RED, GREEN |
+| **B** | Coca-Cola | gt_03, gt_04, gt_05, gt_21, gt_22 | AMBER, GREEN, RED |
+| **C** | Nobu | gt_11, gt_12 | AMBER, GREEN |
 
 A system that gives both members of a set the same rating has failed, even
 if its overall per-item accuracy looks respectable. Uniform ratings within a
@@ -288,6 +308,35 @@ anyway.
 
 *Action:* name clearance search. If a real match surfaces in the same
 profession, change the name.
+
+### gt_17 — "Turn that off" · Scene 1 · dialogue · **RED**
+
+> Of course he did. Turn that off.
+
+Diana says this about the record playing on the turntable two lines earlier.
+"That" is the song — so this is the *same on-screen use* as gt_01, not a
+reference to it, and it needs no separate licence and gets no separate pass.
+
+It is in set A deliberately, because it is the counterexample to the rule a
+lazy implementation would learn from gt_01 and gt_02: *action line = RED,
+dialogue = GREEN*. That rule is wrong, and this line is where it breaks. What
+determines the rating is whether the work is **playing**, not which element
+type the words sit in. A pipeline that rates gt_02 GREEN and gt_17 GREEN has
+learned the wrong rule and will be right for the wrong reason on every
+screenplay after this one.
+
+### gt_21 — Coca-Cola bottle in the diner · Scene 6 · action · **AMBER**
+
+> Felix slides a Coca-Cola bottle across the Formica.
+
+A named brand physically handled on screen, with no framing direction — the
+quiet end of depiction, well below gt_03's "logo facing the lens".
+
+Still AMBER rather than GREEN, because the clearance action is the same one:
+a placement agreement, or the art department swaps in a generic. Prominence
+changes the negotiation, not whether there is one. Having both in the document
+tests whether a rubric can tell loud depiction from quiet depiction without
+collapsing either into "mention".
 
 ---
 

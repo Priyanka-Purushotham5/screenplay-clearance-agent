@@ -154,11 +154,34 @@ def main() -> int:
     check("Set membership agrees in both directions", declared == listed,
           f"{sorted(declared.items())} vs {sorted(listed.items())}")
 
+    # A set discriminates when its members carry exactly the spread of
+    # ratings it declares. "All members differ" was the first version of this
+    # check and it stopped working the moment a set grew past three members:
+    # set B has five mentions of Coca-Cola across three ratings, so two pairs
+    # legitimately match. Declaring the expected spread keeps the check exact
+    # instead of weakening it to "at least two are different".
     for name, s in sorted(sets.items()):
         ratings = [by_id[m]["rating"] for m in s["members"] if m in by_id]
-        check(f"Set {name} ({s['entity']}) discriminates",
-              len(set(ratings)) == len(ratings),
+        want = set(s.get("ratings", []))
+        check(f"Set {name} ({s['entity']}) spans {sorted(want)}",
+              set(ratings) == want and len(ratings) == len(s["members"]),
               f"{s['members']} -> {ratings}")
+
+    # A derived entry must not silently disagree with the entry it points at.
+    # These exist so repeat mentions can be scored without duplicating the
+    # reasoning; if one drifts to a different rating it is no longer derived
+    # and needs its own argument.
+    inconsistent = [
+        f"{e['id']}={e['rating']} but {e['same_as']}={by_id[e['same_as']]['rating']}"
+        for e in entries
+        if e.get("same_as") and e["same_as"] in by_id
+        and e["rating"] != by_id[e["same_as"]]["rating"]
+    ]
+    dangling_refs = [e["id"] for e in entries
+                     if e.get("same_as") and e["same_as"] not in by_id]
+    check("Derived entries agree with the entry they cite",
+          not inconsistent and not dangling_refs,
+          str(inconsistent + dangling_refs))
 
     # ── the two halves of the key agree ────────────────────────────────
     rows = md_rows(md)
@@ -191,9 +214,17 @@ def main() -> int:
           + f" vs {counts['RED']}/{counts['AMBER']}/{counts['GREEN']}")
 
     # ── evidence-required entries ──────────────────────────────────────
+    # Stated as a property rather than a list of ids. The first version of
+    # this check named gt_15 and gt_16 explicitly and broke as soon as
+    # reconciliation added two more mentions of the same invented person —
+    # a snapshot wearing an invariant's clothes, exactly like verify_b5's
+    # scene-numbering check before B7.
     needs_evidence = {e["id"] for e in entries if e.get("requires_evidence")}
-    check("The two fictional-name entries require evidence",
-          needs_evidence == {"gt_15", "gt_16"}, str(sorted(needs_evidence)))
+    fictional = {e["id"] for e in entries
+                 if e.get("checklist") in {"fictional-name", "fictional-doctor"}}
+    check("Exactly the fictional-name entries require evidence",
+          needs_evidence == fictional,
+          f"flagged {sorted(needs_evidence)} vs fictional {sorted(fictional)}")
     check("Evidence-required entries are rated GREEN",
           all(by_id[i]["rating"] == "GREEN" for i in needs_evidence),
           str({i: by_id[i]["rating"] for i in needs_evidence}))

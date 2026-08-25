@@ -227,22 +227,118 @@
       "checklist": "fictional-doctor",
       "rationale": "A fictional character with a plausible real name, a real profession, and an unflattering depiction: a debtor disputing a personal guarantee. This is the textbook name-clearance case, because a real and identifiable Dr. James Holloway would have a defamation claim. GREEN is conditional on a name search finding no such individual, and an honest finding recommends a formal name clearance regardless.",
       "action": "Name clearance search. If a real match surfaces in the same profession, change the name."
+    },
+    {
+      "id": "gt_17",
+      "scene": 1,
+      "element_type": "dialogue",
+      "quote": "Turn that off.",
+      "category": "music",
+      "canonical": "music:take_on_me:a_ha",
+      "rating": "RED",
+      "set": "A",
+      "checklist": "song-in-action",
+      "rationale": "Diana says this about the record audibly playing on the turntable, so 'that' is the same on-screen use as gt_01 rather than a reference to it. Rating it GREEN because the wording is oblique would mean a sync obligation could be dissolved by pointing at the music instead of naming it. This is the counterweight to gt_02: dialogue is not automatically clear — what matters is whether the work is playing.",
+      "action": "None beyond gt_01. The same licence covers it; this is not a second use."
+    },
+    {
+      "id": "gt_18",
+      "scene": 2,
+      "element_type": "dialogue",
+      "quote": "his name is Harman. Marcus Harman.",
+      "category": "person",
+      "canonical": "person:marcus_harman",
+      "rating": "GREEN",
+      "set": null,
+      "requires_evidence": true,
+      "same_as": "gt_15",
+      "checklist": "fictional-name",
+      "rationale": "Same invented person as gt_15, named twice in one line of dialogue. Element type differs from gt_15's action line, but nothing turns on that here: a person who does not exist has no rights to clear in either register."
+    },
+    {
+      "id": "gt_19",
+      "scene": 2,
+      "element_type": "dialogue",
+      "quote": "The Marcus Harman? I thought he retired.",
+      "category": "person",
+      "canonical": "person:marcus_harman",
+      "rating": "GREEN",
+      "set": null,
+      "requires_evidence": true,
+      "same_as": "gt_15",
+      "checklist": "fictional-name",
+      "rationale": "Third mention of the same invented person. 'The Marcus Harman' presses the bait harder than gt_15 does — the definite article asserts fame — and the answer is unchanged."
+    },
+    {
+      "id": "gt_20",
+      "scene": 2,
+      "element_type": "dialogue",
+      "quote": "The Nielsen rep -- his name is Harman",
+      "category": "trademark",
+      "canonical": "trademark:nielsen",
+      "rating": "GREEN",
+      "set": null,
+      "same_as": "gt_08",
+      "checklist": "brand-in-dialogue",
+      "rationale": "Second neutral mention of the same real company in dialogue. Identical analysis to gt_08."
+    },
+    {
+      "id": "gt_21",
+      "scene": 6,
+      "element_type": "action",
+      "quote": "Felix slides a Coca-Cola bottle",
+      "category": "trademark",
+      "canonical": "trademark:coca_cola",
+      "rating": "AMBER",
+      "set": "B",
+      "checklist": "brand-held-to-camera",
+      "rationale": "A named brand physically handled on screen, with no framing direction — the quiet end of depiction, well below gt_03's 'logo facing the lens'. It is still AMBER rather than GREEN because the clearance action is the same one: a placement agreement, or the art department swaps in a generic. Prominence changes the negotiation, not whether there is one. Having both in the document is what tests whether a rubric can tell loud depiction from quiet depiction without collapsing either into 'mention'.",
+      "action": "Placement agreement, or dress with a generic bottle."
+    },
+    {
+      "id": "gt_22",
+      "scene": 6,
+      "element_type": "dialogue",
+      "quote": "I got you a Coke.",
+      "category": "trademark",
+      "canonical": "trademark:coca_cola",
+      "rating": "GREEN",
+      "set": "B",
+      "same_as": "gt_04",
+      "checklist": "brand-in-dialogue",
+      "rationale": "Neutral reference to the brand by its common nickname, offering someone a drink. Identical analysis to gt_04, and it sits two lines above gt_05 in the same scene — the same speaker's next exchange is RED. That proximity is the sharpest version of set B: scene and element type are identical, and only the content separates them."
+    },
+    {
+      "id": "gt_23",
+      "scene": 7,
+      "element_type": "dialogue",
+      "quote": "Taylor Swift had thirty million people waiting",
+      "category": "person",
+      "canonical": "person:taylor_swift",
+      "rating": "AMBER",
+      "set": null,
+      "same_as": "gt_14",
+      "checklist": "living-public-figure",
+      "rationale": "Second mention of the same living public figure, in the reply to gt_14. Still factual, still non-defamatory, still no endorsement implied."
     }
   ],
   "discrimination_sets": {
     "A": {
       "entity": "Take On Me",
-      "members": ["gt_01", "gt_02"],
-      "why": "Heard in an action line versus named in dialogue. Same work, opposite ratings."
+      "members": ["gt_01", "gt_02", "gt_17"],
+      "ratings": ["GREEN", "RED"],
+      "why": "Heard in an action line, named in dialogue, and pointed at obliquely in dialogue while still playing. The third member is why the rule cannot be 'dialogue is clear': gt_17 is dialogue and RED."
     },
     "B": {
       "entity": "Coca-Cola",
-      "members": ["gt_03", "gt_04", "gt_05"],
-      "why": "Depicted, referenced neutrally, and disparaged. One entity, three ratings."
+      "members": ["gt_03", "gt_04", "gt_05", "gt_21", "gt_22"],
+      "ratings": ["AMBER", "GREEN", "RED"],
+      "why": "Depicted loudly and quietly, referenced neutrally twice, and disparaged once. Five mentions of one company across three ratings, and gt_22 sits two lines above gt_05 in the same scene and element type."
     },
     "C": {
       "entity": "Nobu",
       "members": ["gt_11", "gt_12"],
+      "ratings": ["AMBER", "GREEN"],
       "why": "Depicted as a location versus spoken in dialogue. Tests whether the action/dialogue rule generalises past music."
     }
   },
