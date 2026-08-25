@@ -1,348 +1,460 @@
 {
-  "chunk_id": "ch_1",
-  "scenes": [
+ "chunk_id": "ch_1",
+ "scenes": [
+  {
+   "scene_id": "sc_1",
+   "number": 1,
+   "heading": "INT. RECORD LABEL OFFICE - DAY",
+   "elements": [
     {
-      "scene_id": "sc_1",
-      "number": 1,
-      "heading": "INT. RECORD LABEL OFFICE - DAY",
-      "elements": [
-        {
-          "id": "el_1",
-          "type": "scene_heading",
-          "page": 1,
-          "character": null,
-          "text": "INT. RECORD LABEL OFFICE - DAY"
-        },
-        {
-          "id": "el_2",
-          "type": "action",
-          "page": 1,
-          "character": null,
-          "text": "A cluttered A&R office. Gold records line the walls. On a battered turntable, 'Take On Me' by a-ha plays loudly -- that unmistakable synth riff filling the room."
-        },
-        {
-          "id": "el_3",
-          "type": "action",
-          "page": 1,
-          "character": null,
-          "text": "DIANA (40s, sharp) stands at the window, back to us. Her assistant, FELIX (20s, nervous), hovers in the doorway."
-        },
-        {
-          "id": "el_4",
-          "type": "character",
-          "page": 1,
-          "character": "FELIX",
-          "text": "FELIX"
-        },
-        {
-          "id": "el_5",
-          "type": "dialogue",
-          "page": 1,
-          "character": "FELIX",
-          "text": "The Nielsen rep is here. And... he brought lawyers."
-        },
-        {
-          "id": "el_6",
-          "type": "character",
-          "page": 1,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_7",
-          "type": "dialogue",
-          "page": 1,
-          "character": "DIANA",
-          "text": "Of course he did. Turn that off."
-        },
-        {
-          "id": "el_8",
-          "type": "action",
-          "page": 1,
-          "character": null,
-          "text": "Felix crosses to the turntable and lifts the needle."
-        },
-        {
-          "id": "el_9",
-          "type": "action",
-          "page": 1,
-          "character": null,
-          "text": "ANGLE ON -- THE TURNTABLE"
-        },
-        {
-          "id": "el_10",
-          "type": "action",
-          "page": 1,
-          "character": null,
-          "text": "The spinning vinyl slows. The label reads: WEA International. A Coca-Cola can sits beside it, logo facing the lens."
-        }
-      ]
+     "id": "el_1",
+     "type": "scene_heading",
+     "page": 1,
+     "character": null,
+     "text": "INT. RECORD LABEL OFFICE - DAY"
     },
     {
-      "scene_id": "sc_2",
-      "number": 2,
-      "heading": "INT. RECORD LABEL OFFICE - CONTINUOUS",
-      "elements": [
-        {
-          "id": "el_11",
-          "type": "scene_heading",
-          "page": 1,
-          "character": null,
-          "text": "INT. RECORD LABEL OFFICE - CONTINUOUS"
-        },
-        {
-          "id": "el_12",
-          "type": "action",
-          "page": 2,
-          "character": null,
-          "text": "Diana turns. On the wall behind her hangs Nighthawks by Edward Hopper, a large print in a thin black frame."
-        },
-        {
-          "id": "el_13",
-          "type": "character",
-          "page": 2,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_14",
-          "type": "dialogue",
-          "page": 2,
-          "character": "DIANA",
-          "text": "You know that song? Take On Me? I actually love that song. It reminds me why I got into this business."
-        },
-        {
-          "id": "el_15",
-          "type": "character",
-          "page": 2,
-          "character": "FELIX",
-          "text": "FELIX"
-        },
-        {
-          "id": "el_16",
-          "type": "dialogue",
-          "page": 2,
-          "character": "FELIX",
-          "text": "The Nielsen rep -- his name is Harman. Marcus Harman."
-        },
-        {
-          "id": "el_17",
-          "type": "character",
-          "page": 2,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_18",
-          "type": "parenthetical",
-          "page": 2,
-          "character": "DIANA",
-          "text": "(dry)"
-        },
-        {
-          "id": "el_19",
-          "type": "dialogue",
-          "page": 2,
-          "character": "DIANA",
-          "text": "The Marcus Harman? I thought he retired."
-        }
-      ]
+     "id": "el_2",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "A cluttered A&R office. Gold records line the walls. On a battered turntable, 'Take On Me' by a-ha plays loudly -- that unmistakable synth riff filling the room."
     },
     {
-      "scene_id": "sc_3",
-      "number": 3,
-      "heading": "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON",
-      "elements": [
-        {
-          "id": "el_20",
-          "type": "scene_heading",
-          "page": 2,
-          "character": null,
-          "text": "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON"
-        },
-        {
-          "id": "el_21",
-          "type": "action",
-          "page": 2,
-          "character": null,
-          "text": "Diana drives. Felix rides shotgun, scrolling his phone. They pass a brightly lit Nobu restaurant -- Diana glances at it."
-        },
-        {
-          "id": "el_22",
-          "type": "character",
-          "page": 2,
-          "character": "FELIX",
-          "text": "FELIX"
-        },
-        {
-          "id": "el_23",
-          "type": "dialogue",
-          "page": 2,
-          "character": "FELIX",
-          "text": "He says the Coca-Cola deal is dead. They found out about the Pepsi placement last quarter. Now they're threatening to pull their entire catalog."
-        },
-        {
-          "id": "el_24",
-          "type": "character",
-          "page": 2,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_25",
-          "type": "dialogue",
-          "page": 2,
-          "character": "DIANA",
-          "text": "To be, or not to be -- that is the question. Shakespeare said that and it's still the only thing worth saying in a negotiation."
-        }
-      ]
+     "id": "el_3",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "DIANA (40s, sharp) stands at the window, back to us. Her assistant, FELIX (20s, nervous), hovers in the doorway."
     },
     {
-      "scene_id": "sc_4",
-      "number": 4,
-      "heading": "INT. LAW FIRM - CONFERENCE ROOM - NIGHT",
-      "elements": [
-        {
-          "id": "el_26",
-          "type": "scene_heading",
-          "page": 2,
-          "character": null,
-          "text": "INT. LAW FIRM - CONFERENCE ROOM - NIGHT"
-        },
-        {
-          "id": "el_27",
-          "type": "action",
-          "page": 3,
-          "character": null,
-          "text": "A long glass table. MARCUS HARMAN (60s, silver-haired, the actual music industry executive) sits at one end."
-        },
-        {
-          "id": "el_28",
-          "type": "action",
-          "page": 3,
-          "character": null,
-          "text": "Across from him, Diana. Between them, a stack of contracts. A framed poster of Guernica by Pablo Picasso dominates the far wall."
-        },
-        {
-          "id": "el_29",
-          "type": "character",
-          "page": 3,
-          "character": "MARCUS",
-          "text": "MARCUS"
-        },
-        {
-          "id": "el_30",
-          "type": "dialogue",
-          "page": 3,
-          "character": "MARCUS",
-          "text": "Your client Dr. James Holloway signed a personal guarantee. The debt is real."
-        },
-        {
-          "id": "el_31",
-          "type": "character",
-          "page": 3,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_32",
-          "type": "dialogue",
-          "page": 3,
-          "character": "DIANA",
-          "text": "Dr. Holloway disagrees. And frankly, so do I."
-        },
-        {
-          "id": "el_33",
-          "type": "character",
-          "page": 3,
-          "character": "MARCUS",
-          "text": "MARCUS"
-        },
-        {
-          "id": "el_34",
-          "type": "dialogue",
-          "page": 3,
-          "character": "MARCUS",
-          "text": "Then we'll let the courts decide. I've been doing this for forty years. I have never lost a contract dispute."
-        },
-        {
-          "id": "el_35",
-          "type": "character",
-          "page": 3,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_36",
-          "type": "dialogue",
-          "page": 3,
-          "character": "DIANA",
-          "text": "There's always a first time."
-        }
-      ]
+     "id": "el_4",
+     "type": "character",
+     "page": 1,
+     "character": "FELIX",
+     "text": "FELIX"
     },
     {
-      "scene_id": "sc_5",
-      "number": 5,
-      "heading": "I/E. PARKING GARAGE - NIGHT",
-      "elements": [
-        {
-          "id": "el_37",
-          "type": "scene_heading",
-          "page": 3,
-          "character": null,
-          "text": "I/E. PARKING GARAGE - NIGHT"
-        },
-        {
-          "id": "el_38",
-          "type": "action",
-          "page": 3,
-          "character": null,
-          "text": "Diana walks to her car alone. Her footsteps echo. She stops at a concrete pillar. Leans against it. Closes her eyes."
-        },
-        {
-          "id": "el_39",
-          "type": "action",
-          "page": 3,
-          "character": null,
-          "text": "MOMENTS LATER"
-        },
-        {
-          "id": "el_40",
-          "type": "action",
-          "page": 3,
-          "character": null,
-          "text": "She opens her eyes. Takes out her phone. Dials."
-        },
-        {
-          "id": "el_41",
-          "type": "character",
-          "page": 3,
-          "character": "DIANA",
-          "text": "DIANA"
-        },
-        {
-          "id": "el_42",
-          "type": "parenthetical",
-          "page": 3,
-          "character": "DIANA",
-          "text": "(into phone)"
-        },
-        {
-          "id": "el_43",
-          "type": "dialogue",
-          "page": 3,
-          "character": "DIANA",
-          "text": "It's me. We need to talk about the Holloway situation. Meet me at Nobu. Twenty minutes."
-        },
-        {
-          "id": "el_44",
-          "type": "transition",
-          "page": 3,
-          "character": null,
-          "text": "FADE OUT."
-        }
-      ]
+     "id": "el_5",
+     "type": "dialogue",
+     "page": 1,
+     "character": "FELIX",
+     "text": "The Nielsen rep is here. And... he brought lawyers."
+    },
+    {
+     "id": "el_6",
+     "type": "character",
+     "page": 1,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_7",
+     "type": "dialogue",
+     "page": 1,
+     "character": "DIANA",
+     "text": "Of course he did. Turn that off."
+    },
+    {
+     "id": "el_8",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "Felix crosses to the turntable and lifts the needle."
+    },
+    {
+     "id": "el_9",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "ANGLE ON -- THE TURNTABLE"
+    },
+    {
+     "id": "el_10",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "The spinning vinyl slows. The label reads: WEA International. A Coca-Cola can sits beside it, logo facing the lens."
     }
-  ]
+   ]
+  },
+  {
+   "scene_id": "sc_2",
+   "number": 2,
+   "heading": "INT. RECORD LABEL OFFICE - CONTINUOUS",
+   "elements": [
+    {
+     "id": "el_11",
+     "type": "scene_heading",
+     "page": 1,
+     "character": null,
+     "text": "INT. RECORD LABEL OFFICE - CONTINUOUS"
+    },
+    {
+     "id": "el_12",
+     "type": "action",
+     "page": 1,
+     "character": null,
+     "text": "Diana turns. On the wall behind her hangs Nighthawks by Edward Hopper, a large print in a thin black frame."
+    },
+    {
+     "id": "el_13",
+     "type": "character",
+     "page": 1,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_14",
+     "type": "dialogue",
+     "page": 1,
+     "character": "DIANA",
+     "text": "You know that song? Take On Me? I actually love that song. It reminds me why I got into this business."
+    },
+    {
+     "id": "el_15",
+     "type": "character",
+     "page": 1,
+     "character": "FELIX",
+     "text": "FELIX"
+    },
+    {
+     "id": "el_16",
+     "type": "dialogue",
+     "page": 1,
+     "character": "FELIX",
+     "text": "The Nielsen rep -- his name is Harman. Marcus Harman."
+    },
+    {
+     "id": "el_17",
+     "type": "character",
+     "page": 1,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_18",
+     "type": "parenthetical",
+     "page": 1,
+     "character": "DIANA",
+     "text": "(dry)"
+    },
+    {
+     "id": "el_19",
+     "type": "dialogue",
+     "page": 1,
+     "character": "DIANA",
+     "text": "The Marcus Harman? I thought he retired."
+    }
+   ]
+  },
+  {
+   "scene_id": "sc_3",
+   "number": 3,
+   "heading": "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON",
+   "elements": [
+    {
+     "id": "el_20",
+     "type": "scene_heading",
+     "page": 2,
+     "character": null,
+     "text": "INT./EXT. DIANA'S CAR - MOVING - LATE AFTERNOON"
+    },
+    {
+     "id": "el_21",
+     "type": "action",
+     "page": 2,
+     "character": null,
+     "text": "Diana drives. Felix rides shotgun, scrolling his phone. They pass a brightly lit Nobu restaurant -- Diana glances at it."
+    },
+    {
+     "id": "el_22",
+     "type": "character",
+     "page": 2,
+     "character": "FELIX",
+     "text": "FELIX"
+    },
+    {
+     "id": "el_23",
+     "type": "dialogue",
+     "page": 2,
+     "character": "FELIX",
+     "text": "He says the Coca-Cola deal is dead. They found out about the Pepsi placement last quarter. Now they're threatening to pull their entire catalog."
+    },
+    {
+     "id": "el_24",
+     "type": "character",
+     "page": 2,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_25",
+     "type": "dialogue",
+     "page": 2,
+     "character": "DIANA",
+     "text": "To be, or not to be -- that is the question. Shakespeare said that and it's still the only thing worth saying in a negotiation."
+    }
+   ]
+  },
+  {
+   "scene_id": "sc_4",
+   "number": 4,
+   "heading": "INT. LAW FIRM - CONFERENCE ROOM - NIGHT",
+   "elements": [
+    {
+     "id": "el_26",
+     "type": "scene_heading",
+     "page": 2,
+     "character": null,
+     "text": "INT. LAW FIRM - CONFERENCE ROOM - NIGHT"
+    },
+    {
+     "id": "el_27",
+     "type": "action",
+     "page": 2,
+     "character": null,
+     "text": "A long glass table. MARCUS HARMAN (60s, silver-haired, the actual music industry executive) sits at one end."
+    },
+    {
+     "id": "el_28",
+     "type": "action",
+     "page": 2,
+     "character": null,
+     "text": "Across from him, Diana. Between them, a stack of contracts. A framed poster of Guernica by Pablo Picasso dominates the far wall."
+    },
+    {
+     "id": "el_29",
+     "type": "character",
+     "page": 2,
+     "character": "MARCUS",
+     "text": "MARCUS"
+    },
+    {
+     "id": "el_30",
+     "type": "dialogue",
+     "page": 2,
+     "character": "MARCUS",
+     "text": "Your client Dr. James Holloway signed a personal guarantee. The debt is real."
+    },
+    {
+     "id": "el_31",
+     "type": "character",
+     "page": 2,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_32",
+     "type": "dialogue",
+     "page": 2,
+     "character": "DIANA",
+     "text": "Dr. Holloway disagrees. And frankly, so do I."
+    },
+    {
+     "id": "el_33",
+     "type": "character",
+     "page": 2,
+     "character": "MARCUS",
+     "text": "MARCUS"
+    },
+    {
+     "id": "el_34",
+     "type": "dialogue",
+     "page": 2,
+     "character": "MARCUS",
+     "text": "Then we'll let the courts decide. I've been doing this for forty years. I have never lost a contract dispute."
+    },
+    {
+     "id": "el_35",
+     "type": "character",
+     "page": 3,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_36",
+     "type": "dialogue",
+     "page": 3,
+     "character": "DIANA",
+     "text": "There's always a first time."
+    }
+   ]
+  },
+  {
+   "scene_id": "sc_5",
+   "number": 5,
+   "heading": "I/E. PARKING GARAGE - NIGHT",
+   "elements": [
+    {
+     "id": "el_37",
+     "type": "scene_heading",
+     "page": 3,
+     "character": null,
+     "text": "I/E. PARKING GARAGE - NIGHT"
+    },
+    {
+     "id": "el_38",
+     "type": "action",
+     "page": 3,
+     "character": null,
+     "text": "Diana walks to her car alone. Her footsteps echo. She stops at a concrete pillar. Leans against it. Closes her eyes."
+    },
+    {
+     "id": "el_39",
+     "type": "action",
+     "page": 3,
+     "character": null,
+     "text": "MOMENTS LATER"
+    },
+    {
+     "id": "el_40",
+     "type": "action",
+     "page": 3,
+     "character": null,
+     "text": "She opens her eyes. Takes out her phone. Dials."
+    },
+    {
+     "id": "el_41",
+     "type": "character",
+     "page": 3,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_42",
+     "type": "parenthetical",
+     "page": 3,
+     "character": "DIANA",
+     "text": "(into phone)"
+    },
+    {
+     "id": "el_43",
+     "type": "dialogue",
+     "page": 3,
+     "character": "DIANA",
+     "text": "It's me. We need to talk about the Holloway situation. Meet me at Nobu. Twenty minutes."
+    },
+    {
+     "id": "el_44",
+     "type": "transition",
+     "page": 3,
+     "character": null,
+     "text": "CUT TO:"
+    }
+   ]
+  },
+  {
+   "scene_id": "sc_6",
+   "number": 6,
+   "heading": "INT. ALL-NIGHT DINER - LATER",
+   "elements": [
+    {
+     "id": "el_45",
+     "type": "scene_heading",
+     "page": 3,
+     "character": null,
+     "text": "INT. ALL-NIGHT DINER - LATER"
+    },
+    {
+     "id": "el_46",
+     "type": "action",
+     "page": 3,
+     "character": null,
+     "text": "A vinyl booth under a flickering strip light. Felix slides a Coca-Cola bottle across the Formica. Diana does not touch it."
+    },
+    {
+     "id": "el_47",
+     "type": "character",
+     "page": 3,
+     "character": "FELIX",
+     "text": "FELIX"
+    },
+    {
+     "id": "el_48",
+     "type": "dialogue",
+     "page": 3,
+     "character": "FELIX",
+     "text": "I got you a Coke."
+    },
+    {
+     "id": "el_49",
+     "type": "character",
+     "page": 3,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_50",
+     "type": "dialogue",
+     "page": 3,
+     "character": "DIANA",
+     "text": "Coca-Cola tastes like syrup and battery acid. It rots your teeth out of your head and they put a polar bear on the can so nobody notices. I wouldn't pour it down a drain."
+    },
+    {
+     "id": "el_51",
+     "type": "action",
+     "page": 3,
+     "character": null,
+     "text": "She pushes the bottle to the far edge of the table."
+    }
+   ]
+  },
+  {
+   "scene_id": "sc_7",
+   "number": 7,
+   "heading": "EXT. NOBU - SIDEWALK - NIGHT",
+   "elements": [
+    {
+     "id": "el_52",
+     "type": "scene_heading",
+     "page": 3,
+     "character": null,
+     "text": "EXT. NOBU - SIDEWALK - NIGHT"
+    },
+    {
+     "id": "el_53",
+     "type": "action",
+     "page": 4,
+     "character": null,
+     "text": "Diana waits under the awning. Felix catches up, out of breath."
+    },
+    {
+     "id": "el_54",
+     "type": "character",
+     "page": 4,
+     "character": "FELIX",
+     "text": "FELIX"
+    },
+    {
+     "id": "el_55",
+     "type": "dialogue",
+     "page": 4,
+     "character": "FELIX",
+     "text": "There's another way through this. Taylor Swift re-recorded her first six albums when she couldn't buy the masters back. Holloway could do exactly the same thing."
+    },
+    {
+     "id": "el_56",
+     "type": "character",
+     "page": 4,
+     "character": "DIANA",
+     "text": "DIANA"
+    },
+    {
+     "id": "el_57",
+     "type": "dialogue",
+     "page": 4,
+     "character": "DIANA",
+     "text": "Taylor Swift had thirty million people waiting for her. Holloway has a lawyer and a mortgage."
+    },
+    {
+     "id": "el_58",
+     "type": "transition",
+     "page": 4,
+     "character": null,
+     "text": "FADE OUT."
+    }
+   ]
+  }
+ ]
 }

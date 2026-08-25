@@ -59,7 +59,7 @@
       "element_type": "dialogue",
       "category": "trademark",
       "canonical_match": "coca_cola",
-      "note": "Same mark as el_10, dialogue, and in a disparaging context."
+      "note": "Same mark as el_10, in dialogue and neutral — a business conversation, not a product claim. B7's gt_04, GREEN. The disparaging case is el_50."
     },
     {
       "script_element_id": "el_23",
@@ -88,6 +88,34 @@
       "category": "artwork",
       "canonical_match": "guernica",
       "note": "Picasso died 1973 — estate holds until 2044. Shown on screen."
+    },
+        {
+      "script_element_id": "el_46",
+      "element_type": "action",
+      "category": "trademark",
+      "canonical_match": "coca_cola",
+      "note": "Second depiction, scene 6. A bottle on a table with no framing direction — the low-prominence end of the same category as el_10."
+    },
+    {
+      "script_element_id": "el_48",
+      "element_type": "dialogue",
+      "category": "trademark",
+      "canonical_match": "coca_cola",
+      "note": "'Coke'. Tests that a nickname resolves to the same canonical entity as 'Coca-Cola' — which is the entire reason canonical names exist."
+    },
+    {
+      "script_element_id": "el_50",
+      "element_type": "dialogue",
+      "category": "trademark",
+      "canonical_match": "coca_cola",
+      "note": "The brand attacked in dialogue with a health claim. B7's gt_05, RED. The hardest case in the document; without this pin, losing it is silent."
+    },
+    {
+      "script_element_id": "el_55",
+      "element_type": "dialogue",
+      "category": "person",
+      "canonical_match": "taylor_swift",
+      "note": "A living public figure named in dialogue. B7's gt_14, AMBER."
     }
   ],
 
@@ -138,6 +166,10 @@
     {
       "canonical_match": "logo:coca_cola",
       "why": "The can's logo categorised as `logo` as well as `trademark`. Overlapping categories on one depiction are defensible; C3 collapses them."
+    },
+    {
+      "canonical_match": "taylor_swift",
+      "why": "Named twice, el_55 and el_57, both dialogue. C3 groups them into one research task; C6 still rates each mention."
     }
   ]
 }
