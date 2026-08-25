@@ -80,6 +80,14 @@ def build_extraction_agent() -> LlmAgent:
         output_key="extraction",
         disallow_transfer_to_parent=True,
         disallow_transfer_to_peers=True,
+        # Extraction is a structural task with one right answer, so sampling
+        # variance is pure loss. Unset, Flash defaults to temperature 1.0:
+        # three runs over an identical fixture returned 27, 25 and 30 mentions,
+        # and the same Coca-Cola lines came back as `trademark` once and
+        # `product` the next time. C6 grades against a fixed answer key, and a
+        # score cannot separate a better rubric from a luckier sample if the
+        # input moves 20% between runs.
+        generate_content_config=types.GenerateContentConfig(temperature=0.0),
     )
 
 
