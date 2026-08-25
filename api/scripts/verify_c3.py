@@ -206,13 +206,16 @@ def main() -> int:
 
         print(f"  {len(rated)} of {len(mentions)} mentions sit in an element "
               f"a ground-truth entry quotes")
-        print(f"  {len(unrated)} have no rating:\n")
-        for m, g, _ in unrated:
-            print(f"    {m['script_element_id']:<6} {m['element_type']:<14} "
-                  f"{g.canonical:<32} {m['surface_form'][:30]!r}")
-        print("\n  These need a rating before C6 can be scored honestly.")
-        print("  An unrated mention is invisible: a pipeline inventing ten")
-        print("  extra findings would score the same as one that does not.")
+        if not unrated:
+            print("  Every mention has a rating. C6 can be scored honestly.")
+        else:
+            print(f"  {len(unrated)} have no rating:\n")
+            for m, g, _ in unrated:
+                print(f"    {m['script_element_id']:<6} {m['element_type']:<14} "
+                      f"{g.canonical:<32} {m['surface_form'][:30]!r}")
+            print("\n  These need a rating before C6 can be scored honestly.")
+            print("  An unrated mention is invisible: a pipeline inventing ten")
+            print("  extra findings would score the same as one that does not.")
 
     print(f"\n{sum(results)}/{len(results)} checks passed")
     return 0 if all(results) else 1
