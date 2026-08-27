@@ -223,3 +223,65 @@ class ResearchDossier(BaseModel):
     # Recorded so a dossier read from cache months later can be judged against
     # the wording that produced it, the way runs record the rubric version.
     prompt_version: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Stage 3 — ASSESSMENT
+#
+# One rating per MENTION, not per entity.  Research collapsed thirty mentions
+# into twelve dossiers; this expands back out, because the same song is RED
+# playing in an action line and GREEN named in dialogue and that difference is
+# the product.
+#
+# `risk` is lowercase to match db/init.sql (`risk TEXT -- red | amber | green`)
+# and models.Finding.  docs/ground-truth.md writes RED/AMBER/GREEN for
+# readability; the scorer folds case rather than either side changing.
+# ---------------------------------------------------------------------------
+
+Risk = Literal["red", "amber", "green"]
+
+
+class MentionRating(BaseModel):
+    """Maps 1:1 onto a row in `findings`."""
+
+    mention_id: str = Field(
+        description="Echo the mention_id you were given, exactly. This is the "
+                    "only unique handle on a mention."
+    )
+    script_element_id: str
+    surface_form: str = Field(description="Echoed back so a misalignment is visible.")
+    risk: Risk
+    rights_required: list[str] = Field(
+        description="The specific rights to obtain: 'synchronisation licence', "
+                    "'master use licence', 'location agreement'. Empty for green."
+    )
+    rationale: str = Field(description="Two or three sentences a reviewer can check.")
+    cited_evidence_ids: list[str] = Field(
+        description="Evidence ids from the dossier. Every one is validated."
+    )
+    alternatives: list[str] = Field(
+        description="Concrete changes that would lower the rating. Empty for green."
+    )
+
+
+class AssessmentBatch(BaseModel):
+    """What the model returns for one batch of mentions."""
+
+    ratings: list[MentionRating]
+
+
+class AssessmentOutcome(BaseModel):
+    """The stage boundary C7 persists into `findings`."""
+
+    ratings: list[MentionRating]
+    warnings: list[str] = Field(default_factory=list)
+    batches: int = 0
+    # Citations the model made up. Counted rather than hidden: a rating whose
+    # support does not exist reads as though it was checked, which is worse
+    # than one that admits it was not.
+    invalid_citations: int = 0
+    unrated: list[str] = Field(
+        default_factory=list,
+        description="Mentions no batch returned a rating for.",
+    )
+    rubric_version: str = ""
