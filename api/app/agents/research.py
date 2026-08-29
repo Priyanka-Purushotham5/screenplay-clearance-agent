@@ -188,9 +188,17 @@ async def research_entity(
     keys = cache_keys(request.canonical_name, request.surface_key)
 
     cached = await cache.get(keys)
-    if cached is not None:
-        logger.info("research cache hit: %s", request.canonical_name)
+    if cached is not None and cached.status != "failed":
+        logger.info("research cache hit: %s (%s)",
+                    request.canonical_name, cached.status)
         return cached
+    if cached is not None:
+        # A failed dossier is the ABSENCE of an answer wearing the shape of
+        # one. Serving it from cache makes the hole permanent: every future
+        # run of every script would get the same empty result, and C6 would
+        # rate that entity from nothing forever. Retry instead.
+        logger.info("ignoring cached failure for %s, researching again",
+                    request.canonical_name)
 
     call_model = call_model or _call_model_adk
 
@@ -250,7 +258,14 @@ async def research_entity(
 
     dossier = _assemble(request, turn, evidence, queries_run, search_calls,
                         status, failure)
-    await cache.put(dossier, keys)
+    # `partial` is worth keeping -- it has evidence, just not all of it.
+    # `failed` is not: writing it would poison the cache for every later run,
+    # and the usual cause is a transient quota or outage that will have
+    # cleared by the next attempt.
+    if dossier.status != "failed":
+        await cache.put(dossier, keys)
+    else:
+        logger.info("not caching failed dossier for %s", request.canonical_name)
     logger.info("researched %s in %d searches (%s, %dms)", request.canonical_name,
                 search_calls, dossier.status, int((time.monotonic() - started) * 1000))
     return dossier

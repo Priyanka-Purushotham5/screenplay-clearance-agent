@@ -277,6 +277,29 @@ def main() -> int:
     check("Cache keys are ordered canonical-first",
           cache_keys("a", "b") == ["a", "b"] and cache_keys("a", "a") == ["a"])
 
+    # A failed dossier must never enter the cache, and a pre-existing one must
+    # never be served. Both halves matter: the first stops new poisoning, the
+    # second recovers from rows written before the rule existed. This cost a
+    # warming session -- a dossier that failed on a quota outage was replayed
+    # from Postgres on the next run, so a fresh API key was never called and
+    # the error message was a fossil.
+    failing = InMemoryResearchCache()
+    dossier, _, _ = asyncio.run(run([turn(queries=["q1"])], cache=failing,
+                                    raises_on=1))
+    check("A failed dossier is not written to the cache",
+          dossier.status == "failed" and len(failing) == 0,
+          f"{len(failing)} cache rows after a failed run")
+
+    poisoned = InMemoryResearchCache()
+    asyncio.run(poisoned.put(
+        dossier, cache_keys(REQUEST.canonical_name, REQUEST.surface_key)))
+    recovered, model, _ = asyncio.run(run([
+        turn(done=True, identified="Researched on the retry.",
+             evidence=[("x", "https://e.org/1", "y")])], cache=poisoned))
+    check("A cached failure is retried rather than served",
+          recovered.status == "complete" and len(model.messages) > 0,
+          f"{recovered.identified_as[:40]!r}, {len(model.messages)} model calls")
+
     # ── optional live run ──────────────────────────────────────────────
     if "--live" in sys.argv:
         print("\n--- live research (real model + real searches) ---")
