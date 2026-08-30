@@ -40,7 +40,7 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Awaitable, Callable, Optional, Sequence
+from typing import Awaitable, Callable, Optional, Protocol, Sequence
 
 from api.app.agents.assess import (
     MentionToRate,
@@ -60,6 +60,23 @@ from api.app.agents.schemas import (
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONCURRENCY = 6
+
+
+class PersistHook(Protocol):
+    """What C8 supplies so a run survives its own stages.
+
+    Called at stage boundaries, awaited. The graph knows nothing about
+    Postgres; this is the whole of the contract between them.
+    """
+
+    async def stage(self, status: str) -> None:
+        ...
+
+    async def elements(self, mentions) -> None:
+        ...
+
+    async def findings(self, rows: list[dict]) -> None:
+        ...
 
 
 @dataclass
@@ -138,6 +155,7 @@ async def run_pipeline(
     research: Optional[Callable[..., Awaitable[ResearchDossier]]] = None,
     assess: Optional[Callable[..., Awaitable]] = None,
     on_event: Optional[Callable[[str, dict], None]] = None,
+    persist: Optional["PersistHook"] = None,
 ) -> PipelineOutcome:
     """Run the whole graph over one chunk. Never raises.
 
@@ -148,6 +166,13 @@ async def run_pipeline(
     `on_event` is the seam C9's event bus plugs into. It is called
     synchronously with (name, payload) and any exception it raises is
     swallowed: a broken progress listener must not take down a run.
+
+    `persist` is a different seam and deliberately not the same one. Events
+    carry ids and counts because that is what a progress stream should carry;
+    persistence needs the actual records and needs to be awaited. C8 supplies
+    a Postgres implementation, tests supply a recorder, and neither is
+    required — the graph runs without a database, which is what keeps
+    verify_c7 free of one.
     """
     started = time.monotonic()
     outcome = PipelineOutcome()
@@ -183,6 +208,8 @@ async def run_pipeline(
 
     # ── 1. extract ─────────────────────────────────────────────────────
     emit("stage.started", {"stage": "extract"})
+    if persist:
+        await persist.stage("extracting")
     with _Timer(stats, "extract"):
         try:
             if extract is not None:
@@ -211,9 +238,16 @@ async def run_pipeline(
     outcome.mentions = mentions_from_groups(grouped.groups, text_of, scene_of)
     emit("stage.completed", {"stage": "dedup", "entities": stats.entities,
                              "reduction": round(stats.reduction, 2)})
+    if persist:
+        # Written before research starts. Findings reference these rows, and
+        # research is the expensive stage -- if it dies halfway there is still
+        # a record of what the script contains.
+        await persist.elements(outcome.mentions)
 
     # ── 3. research, fanned out under a cap ────────────────────────────
     emit("stage.started", {"stage": "research", "entities": stats.entities})
+    if persist:
+        await persist.stage("researching")
     semaphore = asyncio.Semaphore(max(1, concurrency))
     dossiers: dict[str, ResearchDossier] = {}
 
@@ -282,6 +316,8 @@ async def run_pipeline(
 
     # ── 4. assess ──────────────────────────────────────────────────────
     emit("stage.started", {"stage": "assess", "mentions": len(outcome.mentions)})
+    if persist:
+        await persist.stage("assessing")
     with _Timer(stats, "assess"):
         try:
             if assess is not None:
@@ -305,6 +341,9 @@ async def run_pipeline(
     emit("stage.completed", {"stage": "assess", "ratings": stats.ratings})
 
     # ── 5. compose ─────────────────────────────────────────────────────
+    if persist:
+        await persist.stage("composing")
+        await persist.findings(findings_rows(outcome))
     stats.wall_ms = int((time.monotonic() - started) * 1000)
     stats.limiter = limiter.stats.as_dict()
     outcome.stage_reached = "complete"

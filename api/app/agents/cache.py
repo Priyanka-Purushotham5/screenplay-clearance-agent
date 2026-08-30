@@ -160,6 +160,63 @@ class PostgresResearchCache:
             )
 
 
+class SessionPerCallResearchCache:
+    """PostgresResearchCache, one session per operation.
+
+    This is the one to use under C7's fan-out, and the plain
+    `PostgresResearchCache` is the one to use from a script that owns its own
+    session.
+
+    Why the distinction is not cosmetic
+    -----------------------------------
+    `run_pipeline` researches up to six entities concurrently, and every one of
+    them reads and writes this cache. `AsyncSession` is not concurrency-safe:
+    two coroutines awaiting on one session is a bug, not a slow path. Measured
+    directly, six concurrent reads through a single shared session give
+
+        InvalidRequestError: This session is provisioning a new connection;
+                             concurrent operations are not permitted
+
+    and then leave the session in a state where even closing it raises
+    `IllegalStateChangeError`. The first version of C8's `_execute` passed one
+    shared session, which is what this class exists to make impossible.
+
+    `warm_cache.py` already had the right shape — a session per entity,
+    committed immediately — for the same reason: entity seven surviving must
+    not depend on entity eight.
+
+    It also counts hits and misses, which `PostgresResearchCache` does not.
+    `run_pipeline` reads `cache.hits` with `getattr(cache, "hits", 0)`, so with
+    the plain implementation a warm run truthfully reported zero cache hits in
+    `runs.stats` — a statistic that was quietly always wrong.
+    """
+
+    def __init__(self, session_factory) -> None:
+        self._sessions = session_factory
+        self.hits = 0
+        self.misses = 0
+
+    async def get(self, keys: Sequence[str]) -> Optional[ResearchDossier]:
+        async with self._sessions() as session:
+            found = await PostgresResearchCache(session).get(keys)
+        if found is None:
+            self.misses += 1
+        else:
+            self.hits += 1
+        return found
+
+    async def put(self, dossier: ResearchDossier, keys: Sequence[str]) -> None:
+        # Committed here rather than at the end of the run. A dossier is the
+        # expensive artefact — six searches and a model call — and it should
+        # survive a failure in a later entity, or in a later stage entirely.
+        async with self._sessions() as session:
+            await PostgresResearchCache(session).put(dossier, keys)
+            await session.commit()
+
+    def __bool__(self) -> bool:
+        return True
+
+
 def cache_keys(canonical_name: str, surface_key: str = "") -> list[str]:
     """The lookup order: canonical name first, surface key as the fallback."""
     return [k for k in dict.fromkeys([canonical_name, surface_key]) if k]
