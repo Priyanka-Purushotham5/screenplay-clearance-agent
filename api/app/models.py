@@ -2,15 +2,43 @@
 
 Column names and types mirror db/init.sql exactly.  Any schema change must
 be reflected in both files and then captured in a new Alembic migration.
+
+Timestamps
+----------
+Every timestamp column in db/init.sql is TIMESTAMPTZ, so every one of them
+here must be declared `DateTime(timezone=True)`. A bare `Mapped[datetime]`
+maps to `DateTime()`, which SQLAlchemy compiles as TIMESTAMP WITHOUT TIME
+ZONE — and that disagreement is not caught at startup, because nothing
+compares the model against the live schema.
+
+It is not caught at runtime either, until the first time Python WRITES a
+timestamp. Reads are unaffected: asyncpg returns an aware datetime and
+SQLAlchemy passes it through, so `started_at` came back correctly as
+`...+00:00` for months. But binding an aware datetime to a parameter
+SQLAlchemy has typed as naive gives
+
+    asyncpg.exceptions.DataError: invalid input for query argument $3
+    (can't subtract offset-naive and offset-aware datetimes)
+
+Every timestamp except `runs.finished_at` and `findings.reviewed_at` is
+written by Postgres itself through `server_default=func.now()`, which is why
+this survived from B1 to C8 undetected: C8 is the first code to assign one
+from Python. It cost a debugging session in which a run that had completely
+succeeded looked like it was hanging, because the only row that failed to
+write was the row that says the run is over.
 """
 
 import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Float, ForeignKey, Index, Integer, Text, func
+from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+# One shared instance; SQLAlchemy type objects are immutable and reusable.
+# Named so that a new timestamp column has an obvious right answer to copy.
+TIMESTAMPTZ = DateTime(timezone=True)
 
 
 class Base(DeclarativeBase):
@@ -39,7 +67,7 @@ class Script(Base):
         JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
     )
     uploaded_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
+        TIMESTAMPTZ, nullable=False, server_default=func.now()
     )
 
     scenes: Mapped[list["Scene"]] = relationship(
@@ -120,9 +148,11 @@ class Run(Base):
         JSONB, nullable=False, default=dict, server_default="'{}'::jsonb"
     )
     started_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
+        TIMESTAMPTZ, nullable=False, server_default=func.now()
     )
-    finished_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    finished_at: Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMPTZ, nullable=True
+    )
     error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     script: Mapped["Script"] = relationship("Script", back_populates="runs")
@@ -182,7 +212,7 @@ class ResearchCache(Base):
     )
     status: Mapped[str] = mapped_column(Text, nullable=False)  # complete | partial | failed
     researched_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
+        TIMESTAMPTZ, nullable=False, server_default=func.now()
     )
 
 
@@ -220,9 +250,11 @@ class Finding(Base):
     )  # unreviewed | accepted | overridden
     override_risk: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     review_note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    reviewed_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    reviewed_at: Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMPTZ, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
+        TIMESTAMPTZ, nullable=False, server_default=func.now()
     )
 
     element: Mapped["Element"] = relationship("Element", back_populates="finding")
