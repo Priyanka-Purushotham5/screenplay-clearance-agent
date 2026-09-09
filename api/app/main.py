@@ -32,9 +32,21 @@ from api.app.routers import runs, scripts  # noqa: E402
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
+
+    if settings.auto_init_db:
+        # create_all only adds what is missing, so every boot after the first
+        # is a no-op. Opt-in rather than unconditional: on a machine that
+        # already has its schema, a startup path that can issue DDL is a way
+        # to be surprised later.
+        from api.app.db import init_db  # noqa: PLC0415
+
+        await init_db()
+        logging.getLogger(__name__).info("schema ensured (AUTO_INIT_DB=1)")
+
     logging.getLogger(__name__).info(
-        "clearance API up (models: extraction=%s assessment=%s)",
+        "clearance API up (models: extraction=%s assessment=%s, cors=%s)",
         settings.extraction_model, settings.assessment_model,
+        ",".join(settings.cors_origin_list),
     )
     yield
 
@@ -47,7 +59,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=settings.cors_origin_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -32,7 +32,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, Text, func
+from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, Text, func, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -64,7 +64,7 @@ class Script(Base):
     page_count: Mapped[int] = mapped_column(Integer, nullable=False)
     scene_count: Mapped[int] = mapped_column(Integer, nullable=False)
     parse_warnings: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     uploaded_at: Mapped[datetime] = mapped_column(
         TIMESTAMPTZ, nullable=False, server_default=func.now()
@@ -145,7 +145,7 @@ class Run(Base):
         Text, nullable=False, default="pending", server_default="pending"
     )
     stats: Mapped[dict] = mapped_column(
-        JSONB, nullable=False, default=dict, server_default="'{}'::jsonb"
+        JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
     )
     started_at: Mapped[datetime] = mapped_column(
         TIMESTAMPTZ, nullable=False, server_default=func.now()
@@ -208,7 +208,7 @@ class ResearchCache(Base):
     category: Mapped[str] = mapped_column(Text, nullable=False)
     dossier: Mapped[dict] = mapped_column(JSONB, nullable=False)
     queries_run: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     status: Mapped[str] = mapped_column(Text, nullable=False)  # complete | partial | failed
     researched_at: Mapped[datetime] = mapped_column(
@@ -233,17 +233,17 @@ class Finding(Base):
     )
     risk: Mapped[str] = mapped_column(Text, nullable=False)  # red | amber | green
     rights_required: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     rights_holders: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     rationale: Mapped[str] = mapped_column(Text, nullable=False)
     sources: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     alternatives: Mapped[list] = mapped_column(
-        JSONB, nullable=False, default=list, server_default="'[]'::jsonb"
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
     )
     review_status: Mapped[str] = mapped_column(
         Text, nullable=False, default="unreviewed", server_default="unreviewed"

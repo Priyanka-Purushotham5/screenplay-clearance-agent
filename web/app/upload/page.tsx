@@ -119,8 +119,23 @@ export default function UploadPage() {
         <h1 className="mb-2 text-center text-2xl font-semibold text-slate-100">
           Screenplay Clearance
         </h1>
-        <p className="mb-8 text-center text-sm text-slate-400">
+        <p className="mb-4 text-center text-sm text-slate-400">
           Upload a PDF screenplay to begin clearance analysis.
+        </p>
+
+        {/*
+          Said plainly rather than discovered as a failure. The hosted demo
+          runs on Gemini's free tier: 20 requests a day, and a run costs four
+          of them, shared across everyone using this link. Research is cached
+          per entity so a second script that mentions Coca-Cola does not pay
+          for it again, but extraction and assessment are context-specific
+          and never cached, so four per run is the floor.
+        */}
+        <p className="mb-8 rounded-lg border border-amber-500/30 bg-amber-500/5
+                      px-4 py-3 text-center text-xs leading-relaxed text-slate-400">
+          This demo shares a free-tier quota of about five runs a day. If a run
+          fails on quota, the completed example in the sidebar shows the full
+          findings, the sources and the exported report.
         </p>
 
         <div

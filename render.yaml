@@ -1,0 +1,78 @@
+# Render blueprint — the API and its Postgres.
+#
+# The Next.js frontend is NOT here; it goes to Vercel, which is why
+# CORS_ORIGINS is a manual variable rather than a linked one. Render cannot
+# know the Vercel URL, and Vercel cannot know this service's URL, so the two
+# are wired to each other by hand once both exist.
+#
+# Free tier, deliberately, with the consequences stated rather than
+# discovered:
+#   - the web service sleeps after 15 minutes idle and takes ~50s to wake
+#   - the database expires 30 days after creation
+#   - the filesystem is ephemeral, so UPLOAD_DIR points at /tmp and an
+#     uploaded PDF does not survive a redeploy. Findings do: they live in
+#     Postgres, which is why a seeded run keeps working afterwards.
+
+services:
+  - type: web
+    name: clearance-api
+    runtime: docker
+    plan: free
+    region: oregon
+
+    # Context is the repo root, not ./api. The application imports itself as
+    # `api.app.*`, so building from ./api breaks every import.
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: .
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clearance-db
+          property: connectionString
+
+      # Render hands out postgres://; config.py rewrites it to
+      # postgresql+asyncpg:// so this can be used verbatim.
+
+      # The managed database has no docker-entrypoint-initdb.d, so db/init.sql
+      # never runs here. Without this the service boots against an empty
+      # schema and every query fails.
+      - key: AUTO_INIT_DB
+        value: "1"
+
+      # Ephemeral disk. /tmp is the only reliably writable path.
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+
+      # Set by hand after the Vercel deploy exists. Comma separated, no
+      # trailing slash, and https not http:
+      #   https://your-app.vercel.app,http://localhost:3000
+      - key: CORS_ORIGINS
+        sync: false
+
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PARALLEL_API_KEY
+        sync: false
+
+      # API-key auth, not Vertex. The Vertex path needs Application Default
+      # Credentials mounted from disk, which a managed host cannot provide.
+      - key: GOOGLE_GENAI_USE_VERTEXAI
+        value: "0"
+
+      - key: EXTRACTION_MODEL
+        value: gemini-2.5-flash
+      - key: ASSESSMENT_MODEL
+        value: gemini-2.5-pro
+
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+databases:
+  - name: clearance-db
+    plan: free
+    databaseName: clearance
+    user: clearance
+    region: oregon
