@@ -34,9 +34,11 @@ COPY alembic/ alembic/
 COPY alembic.ini alembic.ini
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
-    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8080/health', timeout=4).status == 200 else 1)"
+    CMD python -c "import os,urllib.request,sys; p=os.environ.get('PORT','8080'); sys.exit(0 if urllib.request.urlopen(f'http://localhost:{p}/health', timeout=4).status == 200 else 1)"
 
 EXPOSE 8080
 
 # docker-compose overrides this with --reload for development.
-CMD ["uvicorn", "api.app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Shell form so $PORT expands: managed hosts (Render, Cloud Run) inject the
+# port to bind, and fall back to 8080 for local docker compose.
+CMD ["sh", "-c", "uvicorn api.app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
