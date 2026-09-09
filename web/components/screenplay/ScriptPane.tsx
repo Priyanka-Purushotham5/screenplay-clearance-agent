@@ -115,6 +115,25 @@ const ScriptPane = forwardRef<ScriptPaneHandle, Props>(
 
     useImperativeHandle(ref, () => ({ scrollToPage, scrollToElement }));
 
+    // The sidebar lives in the app shell and this pane lives in the page, so a
+    // ref cannot reach across. An anchor link cannot either: the list is
+    // virtualised, so a scene that is off-screen has no DOM node to jump to.
+    // A window event is the smallest thing that spans the two.
+    // `scrollToPage` is redefined every render, so the listener is bound once
+    // and reads the current one through a ref. Depending on the function
+    // directly would detach and reattach on every keystroke elsewhere.
+    const scrollToPageRef = useRef(scrollToPage);
+    scrollToPageRef.current = scrollToPage;
+
+    useEffect(() => {
+      const goto = (event: Event) => {
+        const page = (event as CustomEvent<number>).detail;
+        if (typeof page === "number") scrollToPageRef.current(page);
+      };
+      window.addEventListener("clearance:goto-page", goto);
+      return () => window.removeEventListener("clearance:goto-page", goto);
+    }, []);
+
     // -----------------------------------------------------------------------
     // Selection → scroll
     // -----------------------------------------------------------------------

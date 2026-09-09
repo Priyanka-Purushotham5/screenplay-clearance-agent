@@ -1,10 +1,14 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
-import { useRun } from "@/lib/hooks/useRun";
+import { use, useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRun, isInFlight } from "@/lib/hooks/useRun";
 import { useFindings } from "@/lib/hooks/useFindings";
+import { useScript } from "@/lib/hooks/useScript";
+import RunOverlay from "@/components/shell/RunOverlay";
 import { useScenes } from "@/lib/hooks/useScenes";
 import type { Finding, Run } from "@/lib/api-types";
+import { reportUrl } from "@/lib/api";
 import { buildFindingIndex } from "@/lib/finding-index";
 import {
   DeepLinkSeed,
@@ -32,19 +36,30 @@ const STATUS_COLOUR: Record<string, string> = {
   failed: "bg-red-900 text-red-300",
 };
 
+/**
+ * The run's own header. The live counts used to live here and now live in the
+ * status bar at the bottom of the shell, so this says WHAT is being reviewed
+ * rather than repeating how far along it is.
+ */
 function RunHeader({ run }: { run: Run }) {
+  const { data: script } = useScript(run.script_id);
   return (
     <header className="flex items-center gap-4 px-6 py-3 bg-slate-900 border-b border-slate-800 shrink-0">
-      <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded ${STATUS_COLOUR[run.status] ?? STATUS_COLOUR.pending}`}>
+      <h1 className="truncate text-sm font-semibold text-slate-100">
+        {script?.title ?? "Clearance report"}
+      </h1>
+      {script && (
+        <span className="hidden shrink-0 text-xs text-slate-500 sm:inline">
+          {script.page_count} pages · {script.scene_count} scenes
+        </span>
+      )}
+      <span
+        className={`ml-auto shrink-0 text-xs font-bold uppercase px-2 py-0.5 rounded ${
+          STATUS_COLOUR[run.status] ?? STATUS_COLOUR.pending
+        }`}
+      >
         {run.status}
       </span>
-      <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
-        <span>{run.progress.elements_found} elements</span>
-        <span>·</span>
-        <span>{run.progress.researched} researched</span>
-        <span>·</span>
-        <span>{run.progress.assessed} assessed</span>
-      </div>
     </header>
   );
 }
@@ -112,15 +127,39 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
   const { id } = use(params);
 
   const runQuery = useRun(id);
-  const findingsQuery = useFindings(id);
-
   const run: Run | undefined = runQuery.data;
+
+  // Findings are written all at once, in the compose stage, so they are polled
+  // while the run works and not after.
+  const inFlight = isInFlight(run?.status);
+  const findingsQuery = useFindings(id, undefined, { poll: inFlight });
+
+  // ...but that alone leaves the panel empty forever. The findings appear at
+  // the very end, and the poll switches off the moment the run reports
+  // `complete` -- which is the moment they became available. The last poll
+  // returned nothing and no poll follows it, so the user sees "0 findings" for
+  // a run that produced twenty-four, until they think to reload.
+  //
+  // So the transition INTO a terminal state is the trigger: fetch once more,
+  // now that there is something to fetch.
+  const queryClient = useQueryClient();
+  const wasInFlight = useRef(false);
+  useEffect(() => {
+    if (wasInFlight.current && !inFlight && run?.status) {
+      queryClient.invalidateQueries({ queryKey: ["findings", id] });
+    }
+    wasInFlight.current = inFlight;
+  }, [inFlight, run?.status, id, queryClient]);
+
   const scenesQuery = useScenes(run?.script_id ?? "");
 
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [unreviewedOnly, setUnreviewedOnly] = useState(false);
   const [sort, setSort] = useState<SortMode>("risk");
+  // Dismissed by the reader, not by the run. It stays hidden for the rest of
+  // this run once they have chosen to read the screenplay instead.
+  const [overlayHidden, setOverlayHidden] = useState(false);
 
   const allFindings: Finding[] = useMemo(
     () => findingsQuery.data?.findings ?? [],
@@ -128,6 +167,17 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
   );
   const counts = findingsQuery.data?.counts ?? { red: 0, amber: 0, green: 0 };
   const total = findingsQuery.data?.total ?? 0;
+
+  // Counted from the loaded list rather than served by the API. `total` is the
+  // whole run and the list is capped at 500, so on a run larger than that this
+  // would undercount — but the same cap already means the pane is not showing
+  // every finding either, and adding a column to `FindingsOut` for a number
+  // that is right today is not worth the second place it would have to be
+  // maintained. Worth revisiting if a script ever exceeds 500 findings.
+  const reviewed = useMemo(
+    () => allFindings.filter((f) => f.review_status !== "unreviewed").length,
+    [allFindings]
+  );
 
   // Built from the unfiltered list: the script always shows every highlight.
   const index = useMemo(() => buildFindingIndex(allFindings), [allFindings]);
@@ -181,7 +231,7 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
 
   if (runQuery.isError || findingsQuery.isError) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-slate-950 text-red-400 text-sm">
+      <div className="flex flex-1 items-center justify-center bg-slate-950 text-accent-red text-sm">
         Failed to load run.
       </div>
     );
@@ -192,7 +242,11 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
       <div className="flex flex-col h-full bg-slate-950">
         {run && <RunHeader run={run} />}
 
-        <div className="flex flex-1 min-h-0">
+        <div className="relative flex flex-1 min-h-0">
+          {run && inFlight && !overlayHidden && (
+            <RunOverlay run={run} onHide={() => setOverlayHidden(true)} />
+          )}
+
           {/* Script — left */}
           <div className="flex-1 min-w-0 min-h-0 border-r border-slate-800">
             {scenesQuery.data?.scenes ? (
@@ -220,6 +274,12 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
               sort={sort}
               onSort={setSort}
               total={total}
+              reviewed={reviewed}
+              // Only once the run has stopped. The endpoint refuses anything
+              // earlier with a 409, and a half-finished clearance report is
+              // indistinguishable from a finished one once it is a PDF on
+              // somebody's desk.
+              reportHref={inFlight ? null : reportUrl(id)}
             />
 
             <HiddenSelectionBar visible={filtered} onClear={clearFilters} />
@@ -227,7 +287,11 @@ export default function RunPage({ params }: { params: Promise<{ id: string }> })
             <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
               {sortedGroups.length === 0 ? (
                 <p className="text-slate-500 text-sm text-center mt-12">
-                  No findings match the current filters.
+                  {inFlight
+                    ? "Still working \u2014 findings appear when the run finishes."
+                    : allFindings.length === 0
+                      ? "This run produced no findings."
+                      : "No findings match the current filters."}
                 </p>
               ) : (
                 sortedGroups.map(([canonicalName, findings]) => (

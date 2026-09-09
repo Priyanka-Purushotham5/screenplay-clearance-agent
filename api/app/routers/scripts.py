@@ -28,7 +28,7 @@ from fastapi import (
     UploadFile,
     status,
 )
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -36,7 +36,7 @@ from sqlalchemy.orm import selectinload
 from api.app.config import settings
 from api.app.db import get_session
 from api.app.errors import ApiError
-from api.app.models import Scene, Script, ScriptElement
+from api.app.models import Element, Finding, Run, Scene, Script, ScriptElement
 from api.app.parser.pdf import UnparseablePDF, inspect_pdf
 from api.app.parser.pipeline import ParsedScript, parse_screenplay
 from api.app.schemas import (
@@ -46,6 +46,9 @@ from api.app.schemas import (
     ScenesOut,
     ScriptElementOut,
     ScriptOut,
+    ScriptRunOut,
+    ScriptsOut,
+    ScriptSummaryOut,
 )
 from api.app.uploads import (
     EmptyUpload,
@@ -313,6 +316,90 @@ async def get_scenes(
             for s in scenes
         ]
     )
+
+
+@router.get(
+    "",
+    response_model=ScriptsOut,
+    summary="Every script, newest first",
+)
+async def list_scripts(
+    limit: int = Query(100, ge=1, le=500),
+    session: AsyncSession = Depends(get_session),
+) -> ScriptsOut:
+    """The sidebar's list.
+
+    No filtering by owner, because there is no owner: this deployment has one
+    user and every script in the database belongs to them. When authentication
+    lands, this grows a `WHERE user_id = ...` and the frontend does not change,
+    because it was only ever asking "what can I see?" and the server was always
+    the one answering.
+
+    Two queries, not N+1. The obvious implementation asks for the scripts and
+    then loops asking each one for its latest run; with twenty scripts that is
+    twenty-one round trips to render a list nobody scrolls.
+    """
+    scripts = (
+        await session.execute(
+            select(Script).order_by(Script.uploaded_at.desc()).limit(limit)
+        )
+    ).scalars().all()
+    if not scripts:
+        return ScriptsOut(scripts=[])
+
+    ids = [script.id for script in scripts]
+
+    # The latest run per script, via a window function: one row each, chosen by
+    # started_at, without a correlated subquery per script.
+    ranked = (
+        select(
+            Run.id, Run.script_id, Run.status, Run.started_at,
+            func.row_number()
+            .over(partition_by=Run.script_id, order_by=Run.started_at.desc())
+            .label("rank"),
+        )
+        .where(Run.script_id.in_(ids))
+        .subquery()
+    )
+    latest = {
+        row.script_id: row
+        for row in (
+            await session.execute(select(ranked).where(ranked.c.rank == 1))
+        ).all()
+    }
+
+    # Finding counts for exactly those runs, in one grouped query.
+    counts: dict[uuid.UUID, int] = {}
+    if latest:
+        for run_id, total in (
+            await session.execute(
+                select(Element.run_id, func.count(Finding.id))
+                .join(Finding, Finding.element_id == Element.id)
+                .where(Element.run_id.in_([row.id for row in latest.values()]))
+                .group_by(Element.run_id)
+            )
+        ).all():
+            counts[run_id] = total
+
+    return ScriptsOut(scripts=[
+        ScriptSummaryOut(
+            script_id=script.id,
+            title=script.title,
+            page_count=script.page_count,
+            scene_count=script.scene_count,
+            uploaded_at=script.uploaded_at.isoformat(),
+            latest_run=(
+                ScriptRunOut(
+                    run_id=latest[script.id].id,
+                    status=latest[script.id].status,
+                    findings=counts.get(latest[script.id].id, 0),
+                    started_at=latest[script.id].started_at.isoformat(),
+                )
+                if script.id in latest else None
+            ),
+        )
+        for script in scripts
+    ])
 
 
 @router.get(

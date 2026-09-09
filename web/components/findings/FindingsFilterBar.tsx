@@ -21,6 +21,15 @@ interface Props {
   sort: SortMode;
   onSort: (s: SortMode) => void;
   total: number;
+  /** How many findings carry a reviewer's verdict, across the whole run. */
+  reviewed: number;
+  /**
+   * The report endpoint for this run, or null while the run is still in
+   * flight. Null rather than a disabled-looking button with a live href: the
+   * server refuses an unfinished run with a 409, and a link that returns an
+   * error is worse than one that is visibly not ready yet.
+   */
+  reportHref: string | null;
 }
 
 const RISK_CHIP: Record<RiskFilter, string> = {
@@ -49,6 +58,8 @@ export default function FindingsFilterBar({
   sort,
   onSort,
   total,
+  reviewed,
+  reportHref,
 }: Props) {
   return (
     <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center gap-3">
@@ -96,6 +107,40 @@ export default function FindingsFilterBar({
         />
         Unreviewed only
       </label>
+
+      {/*
+        Review progress. Next to the filter rather than in the status bar
+        because this is the number that tells a reviewer whether they are
+        finished, and it belongs beside the control that hides what they have
+        already done. Counted over the whole run, like `counts` — a progress
+        figure that reset when you filtered would be measuring the view.
+      */}
+      {total > 0 && (
+        <span className="text-xs tabular-nums text-slate-500">
+          {reviewed} of {total} reviewed
+        </span>
+      )}
+
+      {/*
+        The run's actual deliverable. Labelled "Export PDF" rather than
+        "Download report" because the endpoint sends Content-Disposition:
+        inline — this opens the report in a new tab, it does not save a file,
+        and a control has to say what it actually does. If the disposition
+        ever changes to `attachment`, this label changes with it.
+      */}
+      {reportHref && (
+        <a
+          href={reportHref}
+          target="_blank"
+          rel="noreferrer noopener"
+          title="Open the full clearance report as a PDF"
+          className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs
+                     font-semibold text-slate-200 transition-colors
+                     hover:border-slate-600 hover:bg-slate-700"
+        >
+          Export PDF
+        </a>
+      )}
 
       {/* Sort toggle — pushed right */}
       <div className="ml-auto flex items-center gap-1 text-xs">

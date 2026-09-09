@@ -24,7 +24,12 @@ asyncpg
 alembic
 
 # --- PDF ------------------------------------------------------------------
+# pdfplumber reads screenplays in; reportlab writes clearance reports out.
+# reportlab is a pure-Python wheel with no system dependencies, which is
+# why it is here rather than WeasyPrint: WeasyPrint renders HTML and looks
+# better for it, but needs pango and cairo apt-installed into the image.
 pdfplumber
+reportlab
 
 # --- Misc -----------------------------------------------------------------
 httpx
