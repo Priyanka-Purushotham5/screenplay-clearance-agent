@@ -39,6 +39,48 @@ class ScriptOut(BaseModel):
     # original back rather than a second copy.
     duplicate_of: Optional[uuid.UUID]
 
+class ScriptRunOut(BaseModel):
+    """The most recent run over a script, or nothing if it has never been run.
+
+    Denormalised onto the list row on purpose. The sidebar shows a dot per
+    script — never run, working, done, failed — and doing that with one request
+    per script would be N+1 queries to render a list.
+    """
+
+    run_id: uuid.UUID
+    status: Literal["pending", "extracting", "researching", "assessing",
+                    "composing", "complete", "failed"]
+    findings: int
+    started_at: str
+
+
+class ScriptSummaryOut(BaseModel):
+    """One row in the scripts sidebar. Deliberately not `ScriptOut`.
+
+    `ScriptOut` carries `parse_warnings` and `duplicate_of`, which the detail
+    view needs and a list does not; sending them for every script would grow
+    the payload with text nobody reads. What a list row needs is enough to
+    label itself and enough to say what state it is in.
+    """
+
+    script_id: uuid.UUID
+    title: str
+    page_count: int
+    scene_count: int
+    uploaded_at: str
+    latest_run: Optional[ScriptRunOut]
+
+
+class ScriptsOut(BaseModel):
+    """An object, not a bare array, matching ScenesOut.
+
+    A top-level JSON array cannot grow a field later without breaking every
+    client; an object can.
+    """
+
+    scripts: list[ScriptSummaryOut]
+
+
 class ScriptElementOut(BaseModel):
     """Mirrors the `ScriptElement` interface in web/lib/api-types.ts."""
 
@@ -158,8 +200,32 @@ class FindingOut(BaseModel):
     # Denormalised from `elements`
     canonical_name: str
     surface_form: str
-    category: str
+    # A Literal, not a str, and this list must stay identical to
+    # api/app/routers/runs.py:UI_CATEGORIES. `str` typechecks fine in Python
+    # and generates `category: string` in TypeScript, which silently removes
+    # compile-time checking from the one field the review UI filters, groups
+    # and colours by — a typo like "tradmark" would pass tsc and then match
+    # nothing at runtime. The router already guarantees the union
+    # (`category if category in UI_CATEGORIES else "other"`); this is the
+    # schema finally saying so, and it is the only literal union of the ten
+    # in web/lib/api-types.ts that generation would otherwise have lost.
+    category: Literal["music", "trademark", "artwork", "person", "location",
+                      "clip", "literary", "other"]
     research_status: Literal["complete", "partial", "failed"]
+
+    # The searches the research agent actually ran for this entity, in order.
+    # C5 caps that loop at six calls and already records every query it made
+    # on `research_cache.queries_run`; the findings query has been joining
+    # that table for `status` and reading straight past this column.
+    #
+    # It is exposed because a rating a reviewer cannot audit is a rating they
+    # have to take on trust. "Rated RED" invites the question "on what
+    # basis?", and `sources` answers half of it — what the agent found. The
+    # queries answer the other half: what it went looking for, and therefore
+    # what it would have found had it been there. GREEN after six searches
+    # that all came back empty is a different claim from GREEN after one
+    # vague query, and this is the only field that tells them apart.
+    queries_run: list[str]
 
     # The join the script pane needs. `element_id` above is the mention;
     # this is the screenplay line it sits in, and the offsets index into
@@ -173,10 +239,48 @@ class FindingOut(BaseModel):
     page: int
 
 
+class FindingReviewIn(BaseModel):
+    """A reviewer's verdict on one finding.
+
+    The three states are not interchangeable and the combinations matter:
+
+        accepted    — the reviewer agrees with the rating as it stands.
+                      An override_risk here would be contradictory.
+        overridden  — the reviewer disagrees and supplies their own rating.
+                      override_risk is required; without it the row would
+                      claim a disagreement and not say what with.
+        unreviewed  — undo. Clears the override, the note and the timestamp,
+                      so a mistaken click leaves no trace behind.
+
+    Validated on the server rather than trusted from the client, because these
+    rows are the record of who decided what, which is the part of a clearance
+    report that matters if anyone ever asks.
+    """
+
+    review_status: Literal["unreviewed", "accepted", "overridden"]
+    override_risk: Optional[Literal["red", "amber", "green"]] = None
+    review_note: Optional[str] = Field(default=None, max_length=2000)
+
+
+class RiskCountsOut(BaseModel):
+    """The three numbers the summary header shows.
+
+    A model rather than `dict`, for the same reason `FindingOut.category` is a
+    Literal rather than `str`: a bare dict generates as
+    `{[key: string]: unknown}` in TypeScript, so the component that renders
+    `counts.red` stops type-checking and a renamed key becomes a blank space in
+    the UI instead of a compile error.
+    """
+
+    red: int = 0
+    amber: int = 0
+    green: int = 0
+
+
 class FindingsOut(BaseModel):
     findings: list[FindingOut]
     total: int
-    counts: dict = Field(
+    counts: RiskCountsOut = Field(
         description="red/amber/green counts across the WHOLE run, not the page. "
                     "A summary header that changed when you paged would be a lie."
     )

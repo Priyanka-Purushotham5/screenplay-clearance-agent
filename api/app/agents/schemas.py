@@ -151,6 +151,13 @@ class ExtractionOutcome(BaseModel):
     elements: list[ResolvedElement]
     stats: ExtractionStats
     warnings: list[str] = Field(default_factory=list)
+    # Did the model actually answer? An empty `elements` list is ambiguous on
+    # its own: it means either "this chunk contains nothing to clear", which is
+    # a correct and useful result, or "every attempt failed", which is not.
+    # Without this the run reports `failed` for both, and a clean script looks
+    # like a broken one. Defaults True so a caller constructing this by hand —
+    # a test stub, a fixture — is treated as a successful extraction.
+    ok: bool = True
 
 
 # ---------------------------------------------------------------------------

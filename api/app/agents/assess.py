@@ -40,6 +40,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Awaitable, Callable, Optional, Sequence
 
+from api.app.agents.retry import call_with_retries, describe
 from api.app.agents.rubric import ASSESSMENT_INSTRUCTION, RUBRIC_VERSION
 from api.app.agents.schemas import (
     AssessmentBatch,
@@ -251,12 +252,21 @@ async def assess_mentions(
 
         for attempt in (1, 2):
             try:
-                result = await call_model(
-                    _batch_message(batch, mentions, dossiers, note)
+                # Two retries are stacked here and they are not the same thing.
+                # This inner one is about TRANSPORT: a 503 or a timeout, worth
+                # waiting out. The `for attempt in (1, 2)` loop around it is
+                # about CONTENT: a response that arrived intact and cited
+                # evidence that does not exist. Conflating them is how a single
+                # 503 came to cost ten mentions their ratings -- the batch was
+                # abandoned on the first transport error, having never been
+                # retried at all.
+                result = await call_with_retries(
+                    lambda: call_model(
+                        _batch_message(batch, mentions, dossiers, note)),
+                    label=f"assessment batch {batches}",
                 )
             except Exception as exc:  # noqa: BLE001 — one bad batch, not one bad run
-                warnings.append(
-                    f"batch {batches} failed: {type(exc).__name__}: {exc}")
+                warnings.append(f"batch {batches} failed: {describe(exc)}")
                 logger.warning("assessment batch %d failed: %s", batches, exc)
                 result = None
                 break

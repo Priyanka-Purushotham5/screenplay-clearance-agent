@@ -56,6 +56,7 @@ app.add_middleware(
 errors.register(app)
 app.include_router(scripts.router)
 app.include_router(runs.router)
+app.include_router(runs.findings_router)
 
 
 @app.get("/health", tags=["meta"])

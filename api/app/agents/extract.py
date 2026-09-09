@@ -14,6 +14,7 @@ and repaired against the source text.  C1 does not touch the database; C2
 persists the results per chunk.
 """
 
+import asyncio
 import json
 import logging
 import os
@@ -27,6 +28,7 @@ from google.genai import types
 
 from api.app.agents.offsets import resolve_offset
 from api.app.agents.prompts import EXTRACTION_INSTRUCTION
+from api.app.agents.retry import RETRY_DELAYS, describe, is_retryable
 from api.app.agents.schemas import (
     ExtractedElement,
     ExtractionChunk,
@@ -41,7 +43,16 @@ logger = logging.getLogger(__name__)
 
 APP_NAME = "clearance-extraction"
 USER_ID = "pipeline"
-MAX_ATTEMPTS = 2  # one retry; a bad chunk must not kill the run
+# The retry policy lives in agents/retry.py so that extraction and assessment
+# cannot drift apart -- they did once, and it cost every red finding in a run.
+# This loop is not `call_with_retries` because it also retries on responses
+# that arrive successfully and are unusable: an empty body, or JSON that fails
+# validation. Those are not exceptions, and they are worth another attempt.
+MAX_ATTEMPTS = len(RETRY_DELAYS)
+
+
+def _is_retryable(exc: Exception) -> bool:
+    return is_retryable(exc)
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -207,11 +218,21 @@ async def extract_chunk(chunk: ExtractionChunk) -> ExtractionOutcome:
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         stats.attempts = attempt
+        delay = RETRY_DELAYS[min(attempt - 1, len(RETRY_DELAYS) - 1)]
+        if delay:
+            logger.info("waiting %.0fs before extraction attempt %s for %s",
+                        delay, attempt, chunk.chunk_id)
+            await asyncio.sleep(delay)
         try:
             raw, usage = await _run_agent(chunk)
         except Exception as exc:  # noqa: BLE001 — the run must survive this
-            warnings.append(f"attempt {attempt}: agent call failed — {exc}")
+            warnings.append(f"attempt {attempt}: {describe(exc)}")
             logger.warning("extraction attempt %s failed for %s: %s", attempt, chunk.chunk_id, exc)
+            if not _is_retryable(exc):
+                warnings.append("error is not retryable; not attempting again")
+                logger.warning("extraction error for %s is not retryable, giving up",
+                               chunk.chunk_id)
+                break
             continue
 
         if usage is not None:
@@ -234,7 +255,8 @@ async def extract_chunk(chunk: ExtractionChunk) -> ExtractionOutcome:
         stats.wall_ms = int((time.perf_counter() - started) * 1000)
         warnings.append(f"chunk {chunk.chunk_id} produced no usable extraction")
         return ExtractionOutcome(
-            chunk_id=chunk.chunk_id, elements=[], stats=stats, warnings=warnings
+            chunk_id=chunk.chunk_id, elements=[], stats=stats,
+            warnings=warnings, ok=False,
         )
 
     stats.elements_returned = len(result.elements)

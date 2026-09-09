@@ -73,3 +73,9 @@ secrets/
 * (2).*
 
 # Do NOT ignore *.sql -- db/init.sql and alembic migration files must be committed
+
+# Parked copies, kept locally, never committed
+_old/
+
+# Parked copies, kept locally, never committed
+_old/

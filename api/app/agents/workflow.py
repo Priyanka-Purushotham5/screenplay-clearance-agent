@@ -94,6 +94,8 @@ class PipelineStats:
     search_calls: int = 0
     stage_ms: dict = field(default_factory=dict)
     limiter: dict = field(default_factory=dict)
+    # Attempts, token usage and offset repairs, straight from the extractor.
+    extraction: dict = field(default_factory=dict)
     rubric_version: str = RUBRIC_VERSION
     wall_ms: int = 0
 
@@ -114,6 +116,7 @@ class PipelineStats:
             "search_calls": self.search_calls,
             "stage_ms": self.stage_ms,
             "limiter": self.limiter,
+            "extraction": self.extraction,
             "rubric_version": self.rubric_version,
             "wall_ms": self.wall_ms,
         }
@@ -127,10 +130,32 @@ class PipelineOutcome:
     stats: PipelineStats = field(default_factory=PipelineStats)
     warnings: list[str] = field(default_factory=list)
     stage_reached: str = "start"
+    extraction_ok: bool = False
 
     @property
     def ok(self) -> bool:
-        return bool(self.ratings) and self.stage_reached == "complete"
+        """Did this run do its job?
+
+        Three conditions, and each one exists because dropping it produced a
+        run that lied.
+
+        `bool(self.ratings)` alone was the original rule, and it called a
+        screenplay with nothing to clear a failure — "I read all of it and
+        found nothing you need to license" is an answer, not an error.
+
+        Replacing it with extraction_ok alone was an over-correction, and it
+        called THIS a success: twenty-four mentions extracted, every one of
+        them unrated because assessment failed, reported as `complete` with
+        zero findings. Both failure modes produce zero ratings; only the
+        mention count separates them.
+
+        So: extraction has to have worked, the graph has to have reached the
+        end, and if there was anything to rate then something has to have been
+        rated.
+        """
+        if not self.extraction_ok or self.stage_reached != "complete":
+            return False
+        return self.stats.mentions == 0 or bool(self.ratings)
 
 
 class _Timer:
@@ -199,6 +224,11 @@ async def run_pipeline(
         from api.app.agents.assess import _call_model_adk as assess_model
         from api.app.agents.tools import web_search
 
+        # Extraction was the one model call the limiter never saw, which is why
+        # a run that spent 66 seconds talking to Gemini reported gemini_calls: 0.
+        # One call per attempt is not tracked -- this counts the extraction as a
+        # single call -- but zero was simply wrong.
+        limited_extract = limiter.wrap_gemini(extract_chunk)
         limited_research_model = limiter.wrap_gemini(research_model)
         limited_assess_model = limiter.wrap_gemini(assess_model)
         limited_search = limiter.wrap_parallel(web_search)
@@ -215,7 +245,7 @@ async def run_pipeline(
             if extract is not None:
                 extraction = await extract(chunk)
             else:
-                extraction = await extract_chunk(chunk)
+                extraction = await limited_extract(chunk)
         except Exception as exc:  # noqa: BLE001
             outcome.warnings.append(f"extract failed: {type(exc).__name__}: {exc}")
             logger.warning("extraction failed", exc_info=True)
@@ -223,6 +253,18 @@ async def run_pipeline(
             stats.limiter = limiter.stats.as_dict()
             outcome.stage_reached = "extract"
             return outcome
+
+    # Extraction never raises: it retries, gives up, and returns an empty
+    # outcome carrying the reason. Reading `.elements` and ignoring `.warnings`
+    # threw that reason away, so a 503 from the model surfaced to the user as
+    # "run did not complete" with an empty warnings list, and cost an hour to
+    # trace. Everything extraction learned is carried forward here.
+    outcome.extraction_ok = getattr(extraction, "ok", True)
+    outcome.warnings.extend(extraction.warnings)
+    stats.extraction = extraction.stats.model_dump()
+    if not outcome.extraction_ok:
+        logger.warning("extraction produced nothing usable for %s: %s",
+                       chunk.chunk_id, "; ".join(extraction.warnings[:3]))
 
     elements = [e.model_dump(mode="json") for e in extraction.elements]
     stats.mentions = len(elements)

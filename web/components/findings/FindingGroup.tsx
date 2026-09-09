@@ -78,7 +78,8 @@ export default function FindingGroup({ findings, onFindingClick }: Props) {
       {/* Group header */}
       <button
         onClick={() => setExpanded((e) => !e)}
-        className="w-full flex items-center gap-3 px-4 py-2.5 bg-slate-800 hover:bg-slate-750 rounded-lg text-left transition-colors group"
+        title={`${displayName} · ${canonicalName} · ${findings.length} mention${findings.length === 1 ? "" : "s"}`}
+        className="w-full flex items-center gap-2 px-3 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-left transition-colors group"
       >
         {/* Chevron */}
         <svg
@@ -88,10 +89,18 @@ export default function FindingGroup({ findings, onFindingClick }: Props) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
 
-        {/* Name */}
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold text-slate-100 truncate">{displayName}</span>
-          <span className="ml-2 text-xs text-slate-500 truncate">{canonicalName}</span>
+        {/* Name.
+            Both of these used to be inline spans carrying `truncate`, which
+            does nothing: `overflow: hidden` has no effect on an inline box, so
+            neither name ever shrank and the row pushed the badges off the end.
+            As flex children they are block-level and truncate properly. */}
+        <div className="flex min-w-0 flex-1 items-baseline gap-2">
+          <span className="max-w-[55%] shrink-0 truncate text-sm font-semibold text-slate-100">
+            {displayName}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-xs text-slate-500">
+            {canonicalName}
+          </span>
         </div>
 
         {/* Split badge */}
@@ -101,9 +110,10 @@ export default function FindingGroup({ findings, onFindingClick }: Props) {
           </span>
         )}
 
-        {/* Mention count */}
-        <span className="text-xs text-slate-500 shrink-0">
-          {findings.length} {findings.length === 1 ? "mention" : "mentions"}
+        {/* Mention count. Abbreviated because at 440px the row has to hold a
+            name, a canonical id, a split badge, this, and a risk chip. */}
+        <span className="shrink-0 text-xs tabular-nums text-slate-500">
+          {findings.length}&times;
         </span>
 
         {/* Risk chip */}

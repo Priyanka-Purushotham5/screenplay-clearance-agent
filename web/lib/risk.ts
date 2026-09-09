@@ -23,33 +23,38 @@ export function effectiveRisk(f: {
 // Colours are CSS custom properties rather than Tailwind classes because the
 // flash keyframes in globals.css consume them. Tailwind's scanner never sees
 // inline style values, and arbitrary values inside @keyframes are not
-// resolvable at build time, so these must be literal hex.
+// resolvable at build time.
+//
+// They were literal hex until the theme landed, at which point a dark red wash
+// stopped working on a white page. They now point at variables defined per
+// theme in globals.css: `--mark-rest: var(--mark-red)` is a valid var chain,
+// so the keyframes still resolve and the toggle still works without a reload.
 //
 // Text colour is deliberately inherited: the script pane is monospace and any
 // per-mark colour or padding would break column alignment.
 
 const MARK_REST: Record<Risk, string> = {
-  red: "#4c1d1d",
-  amber: "#4a3410",
-  green: "#14392c",
+  red: "var(--mark-red)",
+  amber: "var(--mark-amber)",
+  green: "var(--mark-green)",
 };
 
 const MARK_REST_SELECTED: Record<Risk, string> = {
-  red: "#6b2020",
-  amber: "#6b4a12",
-  green: "#17503a",
+  red: "var(--mark-red-on)",
+  amber: "var(--mark-amber-on)",
+  green: "var(--mark-green-on)",
 };
 
 const FLASH_PEAK: Record<Risk, string> = {
-  red: "#b91c1c",
-  amber: "#b45309",
-  green: "#047857",
+  red: "var(--flash-red)",
+  amber: "var(--flash-amber)",
+  green: "var(--flash-green)",
 };
 
 const FLASH_HALO: Record<Risk, string> = {
-  red: "#7f1d1d",
-  amber: "#78350f",
-  green: "#065f46",
+  red: "var(--halo-red)",
+  amber: "var(--halo-amber)",
+  green: "var(--halo-green)",
 };
 
 /**

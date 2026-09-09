@@ -1,25 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Scene } from "@/lib/api-types";
+import apiClient from "@/lib/api";
+import { detail } from "@/lib/hooks/useScript";
+import type { ScenesResponse } from "@/lib/api-types";
 
-export interface ScenesResponse {
-  scenes: Scene[];
-}
+export type { ScenesResponse };
 
-/**
- * Fetches through the Next route handler, matching useRun/useFindings.
- *
- * The route handler is a fixture shim; when the real API lands, all three
- * hooks should move onto `apiClient` together and the handlers under
- * app/api/** go away.
- */
+/** Every scene of a script, with its elements. */
 export function useScenes(scriptId: string) {
-  return useQuery({
+  return useQuery<ScenesResponse>({
     queryKey: ["scenes", scriptId],
     queryFn: async () => {
-      const res = await fetch(`/api/scripts/${scriptId}/scenes`);
-      if (!res.ok) throw new Error("Failed to fetch scenes");
-      return res.json() as Promise<ScenesResponse>;
+      const { data, error } = await apiClient.GET("/api/scripts/{id}/scenes", {
+        params: { path: { id: scriptId } },
+      });
+      if (error || !data) throw new Error(detail(error) ?? "Failed to fetch scenes");
+      return data;
     },
     enabled: !!scriptId,
+    // A parsed script does not change. Refetching it while polling a run would
+    // re-download the whole screenplay every few seconds for nothing.
+    staleTime: Infinity,
   });
 }
