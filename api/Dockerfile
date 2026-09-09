@@ -34,9 +34,13 @@ COPY alembic/ alembic/
 COPY alembic.ini alembic.ini
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
-    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8080/health', timeout=4).status == 200 else 1)"
+    CMD python -c "import os,urllib.request,sys; p=os.environ.get('PORT','8080'); sys.exit(0 if urllib.request.urlopen(f'http://localhost:{p}/health', timeout=4).status == 200 else 1)"
 
 EXPOSE 8080
 
-# docker-compose overrides this with --reload for development.
-CMD ["uvicorn", "api.app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Shell form on purpose, so $PORT expands at runtime. Managed hosts assign a
+# port through that variable and route to it; a container listening on a
+# hard-coded 8080 is simply never reached, and the platform reports it as a
+# failed health check rather than as the misconfiguration it is.
+# Compose overrides this entirely with --reload for development.
+CMD ["sh", "-c", "uvicorn api.app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
