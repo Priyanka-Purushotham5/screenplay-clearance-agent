@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.app import errors
 from api.app.config import settings
+from api.app.db import init_db
 from api.app.logging_config import configure_logging
 
 # Before the routers are imported, so that anything logged during import — and
@@ -32,6 +33,10 @@ from api.app.routers import runs, scripts  # noqa: E402
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
+    # A no-op if the schema already exists (e.g. via db/init.sql in Docker).
+    # On managed Postgres hosts with no init-script support, this is what
+    # actually creates the tables.
+    await init_db()
     logging.getLogger(__name__).info(
         "clearance API up (models: extraction=%s assessment=%s)",
         settings.extraction_model, settings.assessment_model,
@@ -47,7 +52,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[o.strip() for o in settings.allowed_origins.split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

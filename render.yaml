@@ -1,0 +1,55 @@
+# Render Blueprint — one-shot free-tier deploy for the hackathon submission.
+#
+# Usage: Render dashboard -> New -> Blueprint -> pick this repo. Render reads
+# this file and creates both services plus the database. You'll be prompted
+# to fill in GEMINI_API_KEY and PARALLEL_API_KEY yourself (marked sync:false
+# below) — Render never lets a blueprint author supply secret values.
+#
+# Names are fixed so the two services' public URLs are predictable
+# (https://<name>.onrender.com). If Render reports a name collision and
+# appends a suffix, update ALLOWED_ORIGINS / NEXT_PUBLIC_API_URL below and
+# in the Render dashboard to match, then redeploy.
+
+databases:
+  - name: screenplay-clearance-db
+    plan: free
+    databaseName: clearance
+    user: clearance
+
+services:
+  - name: screenplay-clearance-api
+    type: web
+    runtime: docker
+    plan: free
+    dockerfilePath: api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: screenplay-clearance-db
+          property: connectionString
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: GOOGLE_GENAI_USE_VERTEXAI
+        value: "0"
+      - key: EXTRACTION_MODEL
+        value: gemini-2.5-flash
+      - key: ASSESSMENT_MODEL
+        value: gemini-2.5-pro
+      - key: ALLOWED_ORIGINS
+        value: https://screenplay-clearance-web.onrender.com
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PARALLEL_API_KEY
+        sync: false
+
+  - name: screenplay-clearance-web
+    type: web
+    runtime: docker
+    plan: free
+    dockerfilePath: web/Dockerfile
+    dockerContext: web
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://screenplay-clearance-api.onrender.com

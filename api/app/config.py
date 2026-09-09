@@ -1,10 +1,23 @@
 from typing import Optional
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     database_url: str
+
+    @field_validator("database_url")
+    @classmethod
+    def _use_asyncpg(cls, v: str) -> str:
+        # Managed Postgres hosts (Render, Railway, Heroku-style) hand out
+        # plain postgres://, but SQLAlchemy's async engine needs the
+        # asyncpg driver named explicitly in the scheme.
+        if v.startswith("postgres://"):
+            return "postgresql+asyncpg://" + v[len("postgres://"):]
+        if v.startswith("postgresql://"):
+            return "postgresql+asyncpg://" + v[len("postgresql://"):]
+        return v
 
     # Credentials are optional because there are two auth paths and neither
     # needs both keys.  Local runs read gemini_api_key; docker-compose sets
@@ -25,6 +38,10 @@ class Settings(BaseSettings):
 
     #upload cap - 25MB
     max_upload_bytes: int = 25 * 1024 * 1024;
+
+    # Comma-separated. Defaults to local dev; production sets this to the
+    # deployed web origin.
+    allowed_origins: str = "http://localhost:3000"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
