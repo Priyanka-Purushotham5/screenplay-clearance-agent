@@ -35,8 +35,18 @@ services:
         value: "0"
       - key: EXTRACTION_MODEL
         value: gemini-2.5-flash
+      # Not Pro: gemini-2.5-pro 404s for newly-issued API keys ("no longer
+      # available to new users"), which zeroed out every rating on the first
+      # live run. Flash is what this key can actually reach.
       - key: ASSESSMENT_MODEL
-        value: gemini-2.5-pro
+        value: gemini-2.5-flash
+      # The 20-call default is sized for a cautious local run. One pass over
+      # a 4-page script spends it before research finishes: the first live
+      # run used all 20 and left 8 of 12 entities unresearched.
+      - key: GEMINI_DAILY
+        value: "300"
+      - key: GEMINI_RPM
+        value: "10"
       - key: ALLOWED_ORIGINS
         value: https://screenplay-clearance-web.onrender.com
       - key: GEMINI_API_KEY

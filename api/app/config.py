@@ -28,11 +28,16 @@ class Settings(BaseSettings):
     parallel_api_key: Optional[str] = None
     google_genai_use_vertexai: bool = False
 
-    # Flash for extraction, Pro for assessment.  Pinned exactly — the A2 probe
-    # found that `gemini-2.0-flash` silently resolves to `gemini-2.5-flash`,
-    # which would make run-to-run results incomparable.
+    # Pinned exactly — the A2 probe found that `gemini-2.0-flash` silently
+    # resolves to `gemini-2.5-flash`, which would make runs incomparable.
+    #
+    # Assessment wanted Pro (judgement-heavy, low volume), but `gemini-2.5-pro`
+    # now 404s for newly-issued API keys: "no longer available to new users".
+    # It is grandfathered to keys that already had access, so this default has
+    # to be a model anyone can actually reach. Flash is the proven fallback.
+    # If your key can reach a Pro-tier model, set ASSESSMENT_MODEL to it.
     extraction_model: str = "gemini-2.5-flash"
-    assessment_model: str = "gemini-2.5-pro"
+    assessment_model: str = "gemini-2.5-flash"
 
     upload_dir: str = "./uploads"
 
