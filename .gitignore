@@ -79,3 +79,6 @@ _old/
 
 # Parked copies, kept locally, never committed
 _old/
+
+# Editor and agent workspace, kept locally
+.claude/
