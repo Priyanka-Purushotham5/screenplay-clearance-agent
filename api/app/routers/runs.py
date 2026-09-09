@@ -63,11 +63,13 @@ import logging
 import time
 import traceback
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Literal, Optional, get_args
 from urllib.parse import urlparse
 
-from fastapi import APIRouter, Depends, Query
+import anyio.to_thread
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import selectinload
@@ -91,9 +93,16 @@ from api.app.models import (
     Script,
     ScriptElement,
 )
+from api.app.report import (
+    ReportFinding,
+    ReportRun,
+    ReportSource,
+    build_report,
+)
 from api.app.schemas import (
     ERROR_RESPONSES,
     FindingOut,
+    FindingReviewIn,
     FindingsOut,
     RightsHolderOut,
     RunCreateIn,
@@ -106,6 +115,12 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
 
+# Findings are reviewed one at a time and are addressed by their own id, not
+# through the run that produced them — a reviewer works from the findings list,
+# not from a run. Separate prefix, same module, because the response shape and
+# every join behind it already live here.
+findings_router = APIRouter(prefix="/api/findings", tags=["findings"])
+
 IN_FLIGHT = {"pending", "extracting", "researching", "assessing", "composing"}
 
 # The frontend's Finding.category union. `logo` and `product` are real
@@ -114,8 +129,11 @@ IN_FLIGHT = {"pending", "extracting", "researching", "assessing", "composing"}
 # receives a value its types do not admit.
 CATEGORY_FOR_UI = {"logo": "trademark", "product": "trademark",
                    "character_name": "person"}
-UI_CATEGORIES = {"music", "trademark", "artwork", "person", "location",
-                 "clip", "literary", "other"}
+
+# Derived from the schema rather than restated. These two lists have to agree
+# — the schema promises the frontend a union and this set is what enforces it
+# — and two hand-maintained copies of the same list is how they stop agreeing.
+UI_CATEGORIES = set(get_args(FindingOut.model_fields["category"].annotation))
 
 
 # ---------------------------------------------------------------------------
@@ -464,6 +482,23 @@ async def _run_out(session: AsyncSession, run: Run) -> RunOut:
         .where(Element.run_id == run.id)
     )).scalar_one()
 
+    # `runs.stats` is written once, by `_finalise`, when the run is over. So
+    # every number read from it is zero for the entire time somebody is
+    # watching the run happen — which is exactly when they want to see it move.
+    # `research_cache` is written entity by entity as research completes, so
+    # counting it gives a figure that climbs during the run and is still
+    # correct after it. Stats win once they exist, because they record what
+    # THIS run did; the live count is the fallback while it is still running.
+    researched = (await session.execute(
+        select(func.count(func.distinct(ResearchCache.canonical_name)))
+        .where(
+            ResearchCache.canonical_name.in_(
+                select(Element.canonical_name).where(Element.run_id == run.id)
+            ),
+            ResearchCache.status == "complete",
+        )
+    )).scalar_one()
+
     stats = run.stats or {}
     dossiers = stats.get("dossiers", {})
     return RunOut(
@@ -474,7 +509,7 @@ async def _run_out(session: AsyncSession, run: Run) -> RunOut:
             elements_found=elements,
             entities=entities,
             findings=findings,
-            dossiers_complete=dossiers.get("complete", 0),
+            dossiers_complete=dossiers.get("complete", researched),
             dossiers_failed=dossiers.get("failed", 0),
         ),
         stats=stats,
@@ -525,21 +560,28 @@ async def get_findings(
         .limit(limit).offset(offset)
     )).all()
 
-    # Research status per entity, one query rather than one per finding.
+    # The research trail per entity, one query rather than one per finding.
+    # Both columns come from the same row, so pulling `queries_run` alongside
+    # `status` costs nothing over fetching the status alone.
     names = {element.canonical_name for _, element, _, _ in rows}
-    statuses: dict[str, str] = {}
+    trails: dict[str, _Trail] = {}
     if names:
         for row in (await session.execute(
-            select(ResearchCache.canonical_name, ResearchCache.status)
+            select(ResearchCache.canonical_name, ResearchCache.status,
+                   ResearchCache.queries_run)
             .where(ResearchCache.canonical_name.in_(names))
         )).all():
-            statuses[row[0]] = row[1]
+            trails[row[0]] = _Trail(status=row[1], queries=list(row[2] or []))
 
+    # Grouped by the EFFECTIVE risk — an override is the reviewer's answer, and
+    # a header still counting the model's original rating would disagree with
+    # the list underneath it the moment anyone overrode anything.
+    effective_risk = func.coalesce(Finding.override_risk, Finding.risk)
     counts_rows = (await session.execute(
-        select(Finding.risk, func.count())
+        select(effective_risk, func.count())
         .join(Element, Finding.element_id == Element.id)
         .where(Element.run_id == run_id)
-        .group_by(Finding.risk)
+        .group_by(effective_risk)
     )).all()
     counts = {"red": 0, "amber": 0, "green": 0}
     for value, n in counts_rows:
@@ -548,7 +590,7 @@ async def get_findings(
     return FindingsOut(
         findings=[
             _finding_out(finding, element, script_element, scene,
-                         statuses.get(element.canonical_name, "complete"))
+                         trails.get(element.canonical_name, _NO_TRAIL))
             for finding, element, script_element, scene in rows
         ],
         total=total,
@@ -556,7 +598,180 @@ async def get_findings(
     )
 
 
-def _finding_out(finding, element, script_element, scene, research_status) -> FindingOut:
+@dataclass(frozen=True)
+class _Trail:
+    """One entity's research outcome: how it went, and what was searched for.
+
+    A pair rather than two parallel dicts keyed by canonical name. Two dicts
+    can disagree — a name present in one and missing from the other — and the
+    only thing that would show it is a finding rendering a status from a
+    dossier whose queries came from nowhere.
+    """
+
+    status: str
+    queries: list[str]
+
+
+# The fallback for an entity with no cache row at all. `complete` matches the
+# behaviour this replaced: a finding exists, so research ran; a missing row
+# means the dossier was served from a run whose cache has since been cleared,
+# which is not the same as research having failed. The empty query list is
+# honest — we genuinely do not know what was searched.
+_NO_TRAIL = _Trail(status="complete", queries=[])
+
+
+# ---------------------------------------------------------------------------
+# report
+# ---------------------------------------------------------------------------
+
+
+@router.get(
+    "/{run_id}/report",
+    responses={**ERROR_RESPONSES,
+               200: {"content": {"application/pdf": {}},
+                     "description": "The clearance report"}},
+    response_class=Response,
+    summary="Download the clearance report",
+)
+async def get_report(
+    run_id: uuid.UUID,
+    format: Literal["pdf"] = Query("pdf", description="Only pdf, for now."),
+    session: AsyncSession = Depends(get_session),
+) -> Response:
+    """The run as the document a production actually files.
+
+    Deliberately unpaginated: this is the whole run, and a clearance report
+    that stopped at finding 500 would be worse than no report, because it
+    looks complete. `get_findings` caps at 2000 for a UI that renders rows
+    into the DOM; nothing here renders anything until every row is in hand.
+
+    A run still in flight is refused rather than half-rendered. A partial
+    report is indistinguishable from a finished one once it is a PDF on
+    someone's desk, and this is the artefact most likely to be forwarded to
+    somebody who was not watching the run.
+    """
+    run = await session.get(Run, run_id)
+    if run is None:
+        raise ApiError(404, "RUN_NOT_FOUND", "No run with that id.")
+    if run.status not in ("complete", "failed"):
+        raise ApiError(
+            409, "RUN_IN_FLIGHT",
+            f"This run is still {run.status}. A report can only be produced "
+            "once the run has finished.",
+        )
+
+    script = await session.get(Script, run.script_id)
+    if script is None:
+        raise ApiError(404, "SCRIPT_NOT_FOUND", "The script has been deleted.")
+
+    rows = (await session.execute(
+        select(Finding, Element, ScriptElement, Scene)
+        .join(Element, Finding.element_id == Element.id)
+        .join(ScriptElement, Element.script_element_id == ScriptElement.id)
+        .join(Scene, ScriptElement.scene_id == Scene.id)
+        .where(Element.run_id == run_id)
+        .order_by(Scene.number, ScriptElement.seq, Finding.created_at)
+    )).all()
+
+    names = {element.canonical_name for _, element, _, _ in rows}
+    trails: dict[str, _Trail] = {}
+    if names:
+        for row in (await session.execute(
+            select(ResearchCache.canonical_name, ResearchCache.status,
+                   ResearchCache.queries_run)
+            .where(ResearchCache.canonical_name.in_(names))
+        )).all():
+            trails[row[0]] = _Trail(status=row[1], queries=list(row[2] or []))
+
+    findings = []
+    for finding, element, script_element, scene in rows:
+        trail = trails.get(element.canonical_name, _NO_TRAIL)
+        category = CATEGORY_FOR_UI.get(element.category, element.category)
+        findings.append(ReportFinding(
+            canonical_name=element.canonical_name,
+            surface_form=element.surface_form or "",
+            category=category if category in UI_CATEGORIES else "other",
+            risk=finding.risk,
+            override_risk=finding.override_risk,
+            review_status=finding.review_status,
+            review_note=finding.review_note,
+            scene_number=scene.number,
+            page=script_element.page,
+            rationale=finding.rationale or "",
+            rights_required=list(finding.rights_required or []),
+            # Flattened to strings here rather than in the renderer: the PDF
+            # prints "Name (role)" as one line, and giving report.py the
+            # dict shape would make it re-derive that from raw model output.
+            rights_holders=[_holder_line(h) for h in (finding.rights_holders or [])],
+            sources=[
+                ReportSource(
+                    title=str(s.get("title") or urlparse(str(s.get("url", ""))).netloc),
+                    url=str(s.get("url", "")),
+                    excerpt=str(s.get("excerpt", "")),
+                )
+                for s in (finding.sources or [])
+            ],
+            alternatives=list(finding.alternatives or []),
+            research_status=trail.status,
+            queries_run=trail.queries,
+        ))
+
+    report = ReportRun(
+        script_title=script.title,
+        page_count=script.page_count,
+        scene_count=script.scene_count,
+        run_id=str(run.id),
+        started_at=run.started_at,
+        finished_at=run.finished_at,
+        rubric_version=str((run.stats or {}).get("rubric_version", "")),
+        findings=findings,
+    )
+
+    # reportlab is synchronous and CPU-bound; an 80-finding report is a second
+    # or so of pure Python. On the event loop that second is every other
+    # request's latency, including the status polls driving the run overlay.
+    # Same treatment scripts.py gives pdfplumber.
+    pdf = await anyio.to_thread.run_sync(build_report, report)
+
+    logger.info("report for run %s: %d findings, %d bytes",
+                run_id, len(findings), len(pdf))
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            # `inline` rather than `attachment`: a judge clicking this during
+            # a demo should get the report in a browser tab, not a file in a
+            # downloads folder they then have to go and find.
+            "Content-Disposition":
+                f'inline; filename="{_report_filename(script.title)}"',
+        },
+    )
+
+
+def _report_filename(title: str) -> str:
+    """A filename that survives every OS and every quoting rule.
+
+    Screenplay titles contain colons, slashes and quotes; a Content-Disposition
+    header containing an unescaped quote is a malformed header, and a filename
+    containing a slash is a path. Anything outside a conservative set becomes
+    a hyphen.
+    """
+    safe = "".join(c if c.isalnum() or c in " -_" else "-" for c in title).strip()
+    safe = "-".join(part for part in safe.replace(" ", "-").split("-") if part)
+    return f"clearance-{(safe or 'report').lower()[:60]}.pdf"
+
+
+def _holder_line(holder) -> str:
+    """`{name, role}` as one line, tolerating the shapes the model has produced."""
+    parsed = _holder(holder)
+    name = (parsed.get("name") or "").strip()
+    role = (parsed.get("role") or "").strip()
+    if name and role:
+        return f"{name} ({role})"
+    return name or role or "unknown"
+
+
+def _finding_out(finding, element, script_element, scene, trail: _Trail) -> FindingOut:
     category = CATEGORY_FOR_UI.get(element.category, element.category)
     return FindingOut(
         id=finding.id,
@@ -588,10 +803,85 @@ def _finding_out(finding, element, script_element, scene, research_status) -> Fi
         canonical_name=element.canonical_name,
         surface_form=element.surface_form,
         category=category if category in UI_CATEGORIES else "other",
-        research_status=research_status,
+        research_status=trail.status,
+        queries_run=trail.queries,
         script_element_id=script_element.id,
         char_start=element.char_start,
         char_end=element.char_end,
         scene_number=scene.number,
         page=script_element.page,
     )
+
+
+# ---------------------------------------------------------------------------
+# review
+# ---------------------------------------------------------------------------
+
+
+@findings_router.patch("/{finding_id}", response_model=FindingOut,
+                       responses=ERROR_RESPONSES, summary="Record a review verdict")
+async def review_finding(
+    finding_id: uuid.UUID,
+    body: FindingReviewIn = Body(...),
+    session: AsyncSession = Depends(get_session),
+) -> FindingOut:
+    """Accept, override or un-review one finding.
+
+    The combinations are checked here rather than trusted from the client.
+    `overridden` without an `override_risk` would be a row claiming the
+    reviewer disagreed while not saying what with, and `accepted` carrying an
+    override would be a row that agrees and disagrees at once. Both are
+    representable in the database and neither means anything, so both are
+    refused.
+
+    Returns the whole enriched finding rather than an acknowledgement, so the
+    list can replace one row from the response without refetching every
+    finding in the run.
+    """
+    row = (
+        await session.execute(
+            select(Finding, Element, ScriptElement, Scene)
+            .join(Element, Finding.element_id == Element.id)
+            .join(ScriptElement, Element.script_element_id == ScriptElement.id)
+            .join(Scene, ScriptElement.scene_id == Scene.id)
+            .where(Finding.id == finding_id)
+        )
+    ).first()
+    if row is None:
+        raise ApiError(404, "FINDING_NOT_FOUND", "No finding with that id.")
+    finding, element, script_element, scene = row
+
+    if body.review_status == "overridden" and body.override_risk is None:
+        raise ApiError(422, "OVERRIDE_RISK_REQUIRED",
+                       "An overridden finding must say what it is overridden to.")
+    if body.review_status == "accepted" and body.override_risk is not None:
+        raise ApiError(422, "OVERRIDE_NOT_ALLOWED",
+                       "An accepted finding keeps its rating; it cannot also "
+                       "carry an override.")
+
+    finding.review_status = body.review_status
+    if body.review_status == "unreviewed":
+        # Undo, and undo completely: a mistaken click should leave no trace.
+        finding.override_risk = None
+        finding.review_note = None
+        finding.reviewed_at = None
+    else:
+        finding.override_risk = body.override_risk
+        finding.review_note = body.review_note
+        finding.reviewed_at = datetime.now(timezone.utc)
+    await session.commit()
+
+    # The same trail the list endpoint returns. The review response replaces a
+    # row in the client's cache wholesale, so a response missing the queries
+    # would blank the research trail on whichever finding was just reviewed —
+    # the panel would empty out as a side effect of clicking Accept.
+    trail_row = (await session.execute(
+        select(ResearchCache.status, ResearchCache.queries_run)
+        .where(ResearchCache.canonical_name == element.canonical_name)
+    )).first()
+    trail = (_Trail(status=trail_row[0], queries=list(trail_row[1] or []))
+             if trail_row else _NO_TRAIL)
+
+    logger.info("finding %s reviewed: %s%s", finding_id, body.review_status,
+                f" -> {body.override_risk}" if body.override_risk else "")
+    return _finding_out(finding, element, script_element, scene, trail)

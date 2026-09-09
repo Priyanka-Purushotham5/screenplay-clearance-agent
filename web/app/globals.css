@@ -1,28 +1,132 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------------ */
+/* Theme                                                                     */
+/* ------------------------------------------------------------------------ */
+/*
+ * Every component in this app was written dark: `bg-slate-950` for the page,
+ * `text-slate-100` for body copy, `border-slate-800` for rules. Seventy-three
+ * such classes across thirteen files.
+ *
+ * Rather than rewrite all of them into semantic tokens — a large mechanical
+ * edit with many ways to change the look by accident — the SCALE ITSELF is
+ * redefined per theme, and inverted for light. `bg-slate-950` stays
+ * `bg-slate-950` everywhere; in light mode it simply resolves to near-white.
+ * The components never learn that themes exist.
+ *
+ * The inversion is not a straight mirror at the two extremes. In dark, the
+ * page (950) sits BEHIND raised panels (900). Light UIs raise the other way —
+ * white panels on a grey page — so 950 becomes the grey and 900 becomes white,
+ * which preserves the relationship the components were built around.
+ *
+ * `@theme inline` matters: it makes utilities emit `var(--s-950)` rather than
+ * baking the value in, which is what lets the toggle work without a reload.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --s-50:  #f8fafc;  --s-100: #f1f5f9;  --s-200: #e2e8f0;  --s-300: #cbd5e1;
+  --s-400: #94a3b8;  --s-500: #64748b;  --s-600: #475569;  --s-700: #334155;
+  --s-800: #1e293b;  --s-900: #0f172a;  --s-950: #020617;
+
+  /* Script-pane highlights. Consumed through var() chains by risk.ts and by
+     the flash keyframes below, so they must be defined for both themes. */
+  --mark-red:   #4c1d1d;  --mark-amber:   #4a3410;  --mark-green:   #14392c;
+  --mark-red-on: #6b2020; --mark-amber-on: #6b4a12; --mark-green-on: #17503a;
+  --flash-red:  #b91c1c;  --flash-amber:  #b45309;  --flash-green:  #047857;
+  --halo-red:   #7f1d1d;  --halo-amber:   #78350f;  --halo-green:   #065f46;
+
+  /* ---------------------------------------------------------------------
+     THE THREE RATINGS.
+
+     Chosen by measurement rather than by eye. A colour's contrast against
+     white falls as it lightens and against black as it darkens, so "reads on
+     both grounds" has one answer per hue: the most saturated colour whose
+     WORSE contrast still clears WCAG's 3:1 non-text ratio.
+
+         red    #FF0022   3.98:1 on white   5.07:1 on #020617
+         amber  #E27900   3.01:1 on white   6.69:1 on #020617
+         green  #00AB56   3.02:1 on white   6.69:1 on #020617
+
+     What they replace failed that test badly. Tailwind's amber-400 manages
+     2.15:1 on white and emerald-400 manages 2.54:1: fine on the dark app,
+     close to invisible on a printed page, a white slide or the light theme.
+
+     Because these hold on both grounds, they are also the same in both
+     themes. The per-theme literals that used to live here existed only to
+     work around colours that could not do that, and are gone.
+
+     Hues are pinned 40 and 118 degrees apart. Left to optimise freely the
+     search pushed red and amber to within 35 degrees of each other, which
+     clears every ratio and reads as two reds. Amber is a saturated
+     orange-gold rather than yellow because no true yellow clears 3:1 on
+     white at a usable saturation.
+     --------------------------------------------------------------------- */
+  --risk-red:   #FF0022;
+  --risk-amber: #E27900;
+  --risk-green: #00AB56;
+
+  --accent-red:   var(--risk-red);
+  --accent-amber: var(--risk-amber);
+  --accent-green: var(--risk-green);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --s-50:  #020617;  --s-100: #0f172a;  --s-200: #1e293b;  --s-300: #334155;
+  --s-400: #475569;  --s-500: #64748b;  --s-600: #94a3b8;  --s-700: #cbd5e1;
+  --s-800: #e2e8f0;  --s-900: #ffffff;  --s-950: #f1f5f9;
+
+  --mark-red:   #fecdd3;  --mark-amber:   #fde68a;  --mark-green:   #bbf7d0;
+  --mark-red-on: #fda4af; --mark-amber-on: #fcd34d; --mark-green-on: #86efac;
+  --flash-red:  #fb7185;  --flash-amber:  #fbbf24;  --flash-green:  #4ade80;
+  --halo-red:   #fecdd3;  --halo-amber:   #fef3c7;  --halo-green:   #d1fae5;
+
+  /* No accent overrides here. The three ratings clear 3:1 on white as well as
+     on the dark ground, which is the whole reason they were picked, so the
+     light theme inherits them unchanged from :root. */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-slate-50:  var(--s-50);
+  --color-slate-100: var(--s-100);
+  --color-slate-200: var(--s-200);
+  --color-slate-300: var(--s-300);
+  --color-slate-400: var(--s-400);
+  --color-slate-500: var(--s-500);
+  --color-slate-600: var(--s-600);
+  --color-slate-700: var(--s-700);
+  --color-slate-800: var(--s-800);
+  --color-slate-900: var(--s-900);
+  --color-slate-950: var(--s-950);
+
+  --color-accent-red:   var(--accent-red);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-green: var(--accent-green);
+
+  /* The Tailwind steps the risk semantics are actually written in. Redirecting
+     them here means `border-l-red-500`, `bg-emerald-500`, `ring-amber-400` and
+     the rest keep working untouched in about seventy places, and all pick up
+     the measured colours.
+
+     Deliberately only these five. The -900 and -950 steps are used as tinted
+     BACKGROUNDS behind text, where a saturated colour would be unreadable, and
+     emerald-600 is the upload button rather than a rating. Remapping a whole
+     scale would have taken those with it. */
+  --color-red-500:     var(--risk-red);
+  --color-red-400:     var(--risk-red);
+  --color-amber-500:   var(--risk-amber);
+  --color-amber-400:   var(--risk-amber);
+  --color-emerald-500: var(--risk-green);
+  --color-emerald-400: var(--risk-green);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--s-950);
+  color: var(--s-200);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -94,4 +198,193 @@ body {
   .clearance-flash-block {
     animation: none;
   }
+}
+
+/* ------------------------------------------------------------------------ */
+/* The mark                                                                  */
+/* ------------------------------------------------------------------------ */
+
+/* Film running through the gate.
+ *
+ * The translate distance is three frame pitches (3 x 6.3 user units), not one,
+ * and that is load-bearing: the sprocket holes repeat every half pitch but the
+ * red/amber/green frames repeat every THREE, so a one-pitch loop would reset
+ * with a visible colour jump. Keep this in step with CYCLE in
+ * components/brand/Logo.tsx — the two numbers are one number.
+ *
+ * Units are user units, not CSS pixels: the transform applies inside the SVG's
+ * own coordinate system, so the film scrolls at the same rate whether the mark
+ * is rendered at 20px in the footer or 104px inside the progress ring.
+ */
+@keyframes clearance-film {
+  from { transform: translateX(-18.9px); }
+  to   { transform: translateX(0); }
+}
+
+.clearance-film {
+  animation: clearance-film 4.5s linear infinite;
+  transform-box: view-box;
+}
+
+/* The reels, turning with the film they are pulling. Slower than the strip on
+ * purpose — a reel spinning at film speed reads as a fan, not a spool. */
+@keyframes clearance-reel-spin {
+  to { transform: rotate(360deg); }
+}
+
+.clearance-reel {
+  /* Without this the transform-origin set in Logo.tsx would be measured
+     against each group's own bounding box rather than the viewBox, and the
+     reels would orbit instead of turning on their hubs. */
+  transform-box: view-box;
+}
+
+.clearance-reel-spin {
+  animation: clearance-reel-spin 3.2s linear infinite;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Risk on a card                                                            */
+/* ------------------------------------------------------------------------ */
+
+/* The rating washes in from the left edge and fades out, instead of a rule
+   down the side.
+ *
+ * The rule was not decoration and this is not simply its removal. Scanning a
+ * column of eighty findings, the eye tracks one edge for colour, so whatever
+ * replaces it has to keep that column readable: the bleed is densest at the
+ * very edge for exactly that reason, and fades to nothing by 62% so it never
+ * competes with the text sitting on top of it.
+ *
+ * It also replaces the flat `bg-*-950` tint these cards used to carry. Running
+ * both would have meant two coats of the same colour, and the flat one was
+ * what made the border necessary in the first place: an even wash gives the
+ * eye no edge to follow.
+ *
+ * `--risk` is set by the .risk-* classes below rather than baked in here, so
+ * one gradient serves all three ratings and an override only has to change
+ * which class the card carries.
+ */
+.clearance-bleed {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--risk) 30%, transparent) 0%,
+    color-mix(in srgb, var(--risk) 6%, transparent) 30%,
+    transparent 62%
+  );
+}
+
+.risk-red   { --risk: var(--risk-red); }
+.risk-amber { --risk: var(--risk-amber); }
+.risk-green { --risk: var(--risk-green); }
+
+/* ------------------------------------------------------------------------ */
+/* The wordmark                                                              */
+/* ------------------------------------------------------------------------ */
+
+/* Red through amber to green, across the whole phrase rather than per word,
+   so the three ratings read as one pass of film instead of three labels.
+   `color` is set first and stays as the fallback: a browser without
+   background-clip:text ignores the -webkit-text-fill-color line too, and
+   renders solid amber rather than nothing at all. */
+.clearance-wordmark {
+  color: var(--risk-amber);
+  background-image: linear-gradient(
+    96deg,
+    var(--risk-red) 4%,
+    var(--risk-amber) 48%,
+    var(--risk-green) 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ------------------------------------------------------------------------ */
+/* The run mark                                                              */
+/* ------------------------------------------------------------------------ */
+
+/* The tri-colour reel, and the projector beam under it. Slower than the
+   header mark's reels: this one is watched for minutes at a time, and at
+   3.2s it reads as agitated rather than running. */
+@keyframes clearance-tri-reel {
+  to { transform: rotate(360deg); }
+}
+@keyframes clearance-beam {
+  0%   { opacity: .4; }
+  100% { opacity: .9; }
+}
+
+.clearance-tri-reel {
+  transform-box: view-box;
+  transform-origin: 50px 32px;
+  animation: clearance-tri-reel 8s linear infinite;
+}
+
+.clearance-beam {
+  animation: clearance-beam 2s ease-in-out infinite alternate;
+}
+
+/* Neutrals for the run mark, as classes rather than fill attributes, so the
+   camera themes with the page. Its body was originally drawn to sit on a card
+   a shade lighter than the page; inside the progress ring it sits on the page
+   itself, and at those values the silhouette disappeared. */
+.rm-body   { fill: var(--s-800);  stroke: var(--s-400); }
+.rm-inset  { fill: var(--s-700);  stroke: var(--s-400); }
+.rm-line   { stroke: var(--s-400); }
+.rm-rim    { fill: var(--s-950);  stroke: var(--s-400); }
+.rm-hub    { fill: var(--s-600); }
+.rm-dot    { fill: var(--s-100); }
+.rm-shield { fill: var(--s-900); }
+.rm-disc   { fill: var(--s-900); }
+
+/* Both stop entirely. The mark still reads, being a camera made of film
+   whether or not the film is moving, and every screen that animates it also
+   states what is happening in words. */
+@media (prefers-reduced-motion: reduce) {
+  .clearance-film,
+  .clearance-reel-spin,
+  .clearance-tri-reel,
+  .clearance-beam {
+    animation: none;
+  }
+  .clearance-beam { opacity: .7; }
+}
+
+/* ------------------------------------------------------------------------ */
+/* Run overlay                                                               */
+/* ------------------------------------------------------------------------ */
+
+/* Constant rotation, used only on decorative elements. Progress itself is
+   never animated on a timer — see RunOverlay. */
+@keyframes clearance-orbit {
+  to { transform: rotate(360deg); }
+}
+
+.clearance-orbit {
+  animation: clearance-orbit 9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clearance-orbit { animation: none; }
+}
+
+/* ------------------------------------------------------------------------ */
+/* Landing illustrations                                                     */
+/* ------------------------------------------------------------------------ */
+
+/* A two-beat reveal: the thing that goes in, then what comes out of it.
+   Purely decorative — the diagrams read correctly with no animation at all,
+   which is what makes them safe to disable. */
+@keyframes clearance-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.clearance-fade-1 { animation: clearance-fade .5s ease-out both; }
+.clearance-fade-2 { animation: clearance-fade .5s ease-out .35s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .clearance-fade-1,
+  .clearance-fade-2 { animation: none; }
 }

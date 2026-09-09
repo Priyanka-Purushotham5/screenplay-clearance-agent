@@ -1,370 +1,67 @@
-// STUB — run `npm run gen:types` once the API is live to replace this file
+/**
+ * The names the app imports, sourced from the generated OpenAPI schema.
+ *
+ * `lib/api-schema.ts` is written by `npm run gen:types` straight from the
+ * running API's /openapi.json and must never be edited by hand. This file is
+ * the thin layer above it: it gives the generated shapes the short names the
+ * components already use, so `import type { Finding } from "@/lib/api-types"`
+ * keeps working while the definition behind it becomes generated truth.
+ *
+ * Why not simply generate into this file
+ * --------------------------------------
+ * That is what package.json used to do, and it would have broken eleven files
+ * at once. openapi-typescript emits `paths` and `components` — it does not
+ * emit `Finding`, `Script` or `Scene`, which is what every component imports.
+ * Pointing the generator at this path replaces those names with nothing.
+ *
+ * Keeping the alias layer separate also makes drift loud instead of silent.
+ * If the API stops sending `FindingOut`, or renames a field a component reads,
+ * the failure is a TypeScript error here or at the point of use — not a page
+ * that renders `undefined` at a demo.
+ *
+ * Checked when this layer was introduced: of the ten string-literal unions the
+ * hand-written stub declared, generation preserved nine. The tenth,
+ * `Finding.category`, was widened to `string` by a `category: str` in
+ * api/app/schemas.py, and was fixed there rather than patched here — a union
+ * restated in TypeScript is a union that can disagree with the server.
+ */
+
+import type { components, paths } from "./api-schema";
+
+export type { paths };
+
+type Schemas = components["schemas"];
 
 // ---------------------------------------------------------------------------
-// Shared domain shapes (from technical-spec.md §5)
+// Domain shapes
 // ---------------------------------------------------------------------------
 
-export interface Script {
-  script_id: string;
-  title: string;
-  source_format: "pdf" | "fdx" | "fountain";
-  page_count: number;
-  scene_count: number;
-  parse_warnings: string[];
-  /** Non-null when this upload matched an existing script by SHA-256. */
-  duplicate_of: string | null;
-}
-
-export interface Scene {
-  id: string;
-  script_id: string;
-  number: number;
-  int_ext: "INT" | "EXT" | "INT/EXT" | null;
-  location: string | null;
-  time_of_day: string | null;
-  heading: string;
-  page_start: number;
-  page_end: number;
-  elements: ScriptElement[];
-}
-
-export interface ScriptElement {
-  id: string;
-  scene_id: string;
-  seq: number;
-  type:
-    | "scene_heading"
-    | "action"
-    | "character"
-    | "dialogue"
-    | "parenthetical"
-    | "transition";
-  character: string | null;
-  page: number;
-  text: string;
-}
-
-export interface Run {
-  run_id: string;
-  script_id: string;
-  status:
-    | "pending"
-    | "extracting"
-    | "researching"
-    | "assessing"
-    | "composing"
-    | "complete"
-    | "failed";
-  progress: {
-    elements_found: number;
-    researched: number;
-    assessed: number;
-  };
-  stats: {
-    cache_hits?: number;
-    tokens_in?: number;
-    tokens_out?: number;
-  };
-  started_at: string;
-  finished_at: string | null;
-  error: string | null;
-}
-
-export interface Finding {
-  id: string;
-  element_id: string;
-  risk: "red" | "amber" | "green";
-  rights_required: string[];
-  rights_holders: RightsHolder[];
-  rationale: string;
-  sources: Source[];
-  alternatives: string[];
-  review_status: "unreviewed" | "accepted" | "overridden";
-  override_risk: "red" | "amber" | "green" | null;
-  review_note: string | null;
-  reviewed_at: string | null;
-  created_at: string;
-  // Enriched fields — denormalised from the elements table for display
-  canonical_name: string;
-  surface_form: string;
-  category: "music" | "trademark" | "artwork" | "person" | "location" | "clip" | "literary" | "other";
-  scene_number: number;
-  research_status: "complete" | "partial" | "failed";
-  // D4 — the join into the script pane.
-  //   findings.element_id → elements.id → elements.script_element_id
-  // NOTE: element_id above is the MENTION id; it never matches ScriptElement.id.
-  script_element_id: string;
-  // Offsets into that one element's `text` — not into the whole script.
-  // Zero-based, half-open. Nullable: the extractor does not always supply them,
-  // and when it does they are LLM output and can be wrong. See lib/highlight.ts.
-  char_start: number | null;
-  char_end: number | null;
-  page: number;
-}
-
-export interface RightsHolder {
-  role: string;
-  name: string;
-  confidence: "high" | "medium" | "low";
-}
-
-export interface Source {
-  id: string;
-  claim: string;
-  url: string;
-  title: string;
-  excerpt: string;
-}
-
-export interface ApiError {
-  detail: string;
-}
-
-export interface NoTextLayerError {
-  code: "NO_TEXT_LAYER";
-  pages_checked: number;
-}
+export type Script = Schemas["ScriptOut"];
+export type Scene = Schemas["SceneOut"];
+export type ScriptElement = Schemas["ScriptElementOut"];
+export type Run = Schemas["RunOut"];
+export type Finding = Schemas["FindingOut"];
+export type RightsHolder = Schemas["RightsHolderOut"];
+export type Source = Schemas["SourceOut"];
 
 // ---------------------------------------------------------------------------
-// paths — openapi-typescript convention
+// Envelopes and errors
 // ---------------------------------------------------------------------------
 
-export interface paths {
-  // -----------------------------------------------------------------------
-  // Scripts
-  // -----------------------------------------------------------------------
+export type RunProgress = Schemas["RunProgressOut"];
+export type ScenesResponse = Schemas["ScenesOut"];
+export type ScriptsResponse = Schemas["ScriptsOut"];
+export type ScriptSummary = Schemas["ScriptSummaryOut"];
+export type ScriptRun = Schemas["ScriptRunOut"];
+export type FindingsResponse = Schemas["FindingsOut"];
+export type ApiError = Schemas["ApiErrorOut"];
+export type NoTextLayerError = Schemas["NoTextLayerOut"];
 
-  "/api/scripts": {
-    post: {
-      requestBody: {
-        content: {
-          "multipart/form-data": {
-            /** The screenplay PDF file (≤ 25 MB). */
-            file: Blob;
-          };
-        };
-      };
-      responses: {
-        /** Created — parsed successfully. */
-        201: {
-          content: {
-            "application/json": Script;
-          };
-        };
-        /** Payload Too Large — file exceeds the 25 MB cap. */
-        413: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-        /** Unsupported Media Type — not a valid PDF. */
-        415: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-        /** Unprocessable Entity — scanned / no text layer, or unparseable. */
-        422: {
-          content: {
-            "application/json": NoTextLayerError | ApiError;
-          };
-        };
-      };
-    };
-  };
+// ---------------------------------------------------------------------------
+// Convenience unions, derived rather than restated
+// ---------------------------------------------------------------------------
 
-  "/api/scripts/{id}": {
-    get: {
-      parameters: {
-        path: { id: string };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": Script;
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-
-  "/api/scripts/{id}/scenes": {
-    get: {
-      parameters: {
-        path: { id: string };
-        query?: {
-          /** First scene number to include (inclusive). */
-          from?: number;
-          /** Last scene number to include (inclusive). */
-          to?: number;
-        };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              scenes: Scene[];
-            };
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-
-  // -----------------------------------------------------------------------
-  // Runs
-  // -----------------------------------------------------------------------
-
-  "/api/runs": {
-    post: {
-      requestBody: {
-        content: {
-          "application/json": {
-            script_id: string;
-          };
-        };
-      };
-      responses: {
-        /** Accepted — background task started. */
-        202: {
-          content: {
-            "application/json": {
-              run_id: string;
-              status: "pending";
-            };
-          };
-        };
-        /** Unknown script. */
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-        /** A run is already in flight for this script. */
-        409: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-
-  "/api/runs/{id}": {
-    get: {
-      parameters: {
-        path: { id: string };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": Run;
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-
-  "/api/runs/{id}/findings": {
-    get: {
-      parameters: {
-        path: { id: string };
-        query?: {
-          risk?: "red" | "amber" | "green";
-          category?: string;
-          review_status?: "unreviewed" | "accepted" | "overridden";
-          /** Filter to a specific scene number. */
-          scene?: number;
-          limit?: number;
-          offset?: number;
-        };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              findings: Finding[];
-              total: number;
-              counts: {
-                red: number;
-                amber: number;
-                green: number;
-              };
-            };
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-
-  // -----------------------------------------------------------------------
-  // Findings
-  // -----------------------------------------------------------------------
-
-  "/api/findings/{id}": {
-    get: {
-      parameters: {
-        path: { id: string };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": Finding;
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-
-    patch: {
-      parameters: {
-        path: { id: string };
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            review_status: "unreviewed" | "accepted" | "overridden";
-            override_risk?: "red" | "amber" | "green";
-            review_note?: string;
-          };
-        };
-      };
-      responses: {
-        200: {
-          content: {
-            "application/json": Finding;
-          };
-        };
-        404: {
-          content: {
-            "application/json": ApiError;
-          };
-        };
-      };
-    };
-  };
-}
+export type Risk = Finding["risk"];
+export type Category = Finding["category"];
+export type ReviewStatus = Finding["review_status"];
+export type RunStatus = Run["status"];
